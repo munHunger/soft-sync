@@ -1,0 +1,26 @@
+{
+  "name": "soft-sync",
+  "version": "1.0.0",
+  "description": "sync your settings across devices",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "npm run build && node build/index.js",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backup",
+    "sync",
+    "settings",
+    "software"
+  ],
+  "author": "munHunger",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "3.7.4"
+  },
+  "devDependencies": {
+    "ts-node": "8.5.4"
+  }
+}
