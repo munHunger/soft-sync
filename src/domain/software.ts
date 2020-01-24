@@ -1,4 +1,4 @@
-enum PositionType {
+export enum PositionType {
     END
 }
 class Position {
@@ -13,7 +13,7 @@ class Conditional {
     ) {}
 }
 
-class Setting {
+export class Setting {
     constructor(
         public path: string,
         public content: string,

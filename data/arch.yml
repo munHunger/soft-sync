@@ -1,4 +1,8 @@
 name: arch laptop
+manager: PACMAN
 wanted:
-
-installed: #DO NOT MODIFY
+  - i3
+  - urxvt
+installed:
+  - i3
+  - urxvt
