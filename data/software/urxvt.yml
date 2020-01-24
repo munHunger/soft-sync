@@ -1,0 +1,72 @@
+name: "urxvt terminal"
+packages:
+  - name: "urxvt"
+    alternatives:
+      - name: "rxvt-unicode"
+        manager: PACMAN
+settings:
+  - path: ~/.config/i3/config
+    content: |-
+      bindsym $mod+Return exec urxvt
+    position:
+      type: END
+    when:
+      installed:
+        - i3
+  - path: ~/.Xdefaults
+    content: |-
+      !! Appearance
+      urxvt.termName: rxvt-unicode
+      urxvt.scrollBar: false
+      !! Font prefferenes
+      urxvt.font: xft:DejaVu Sans Mono:pixelsize=13
+      urxvt.boldFont: xft:DejaVu Sans Mono:pixelsize=13:weight=bold
+      urxvt.letterSpace: -1
+      !! Larger history limit
+      urxvt.saveLines: 1000000
+      
+      urxvt.matcher.button: C1
+      !! Change font size on Control-Plus/Minus
+      URxvt.keysym.Control-0x2b: perl:font-size:increase
+      URxvt.keysym.Control-0x2d: perl:font-size:decrease
+      
+      !!Monokai color theme
+      ! special
+      *.foreground:   #f1ebeb
+      *.background:   #272822
+      *.cursorColor:  #f1ebeb
+      
+      ! black
+      *.color0:       #48483e
+      *.color8:       #76715e
+      
+      ! red
+      *.color1:       #dc2566
+      *.color9:       #fa2772
+      
+      ! green
+      *.color2:       #8fc029
+      *.color10:      #a7e22e
+      
+      ! yellow
+      *.color3:       #d4c96e
+      *.color11:      #e7db75
+      
+      ! blue
+      *.color4:       #55bcce
+      *.color12:      #66d9ee
+      
+      ! magenta
+      *.color5:       #9358fe
+      *.color13:      #ae82ff
+      
+      ! cyan
+      *.color6:       #56b7a5
+      *.color14:      #66efd5
+      
+      ! white
+      *.color7:       #acada1
+      *.color15:      #cfd0c2
+      
+      urxvt*transparent: true
+      urxvt*shading: 30

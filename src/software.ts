@@ -1,7 +1,24 @@
+enum PositionType {
+    END
+}
+class Position {
+    constructor(
+        public type: PositionType
+    ) {}
+}
+
+class Conditional {
+    constructor(
+        public installed: string[]
+    ) {}
+}
+
 class Setting {
     constructor(
         public path: string,
-        public content: string
+        public content: string,
+        public position: Position,
+        public when: Conditional
     ) {}
 }
 

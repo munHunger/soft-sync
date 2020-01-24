@@ -1,0 +1,6 @@
+name: "Rofi"
+packages:
+  - name: "rofi"
+    alternatives:
+      - name: "rofi"
+        manager: PACMAN

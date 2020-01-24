@@ -35,7 +35,7 @@ yargs.command(
 
 function readConfig(name: string): Promise<Software> {
   return fs
-    .readFile(`./data/${name}.yml`, "utf-8")
+    .readFile(`./data/software/${name}.yml`, "utf-8")
     .then(data => yaml.load(data))
     .then(data => data as Software);
 }
@@ -43,7 +43,23 @@ function readConfig(name: string): Promise<Software> {
 function configure(application: Software, options: any) {
   if (options.dryRun) {
     application.settings.forEach(setting => {
-      logger.info(`Writing configuration to ${setting.path} \n${setting.content}\n`);
+      if (setting.when) {
+        //TODO: actually check
+        Promise.all(setting.when.installed.map(name => readConfig(name))).then(
+          configurations => {
+            let config = configurations
+              .map(c => c.settings)
+              .reduce((acc, val) => acc.concat(val), [])
+              .map(s => s.content)
+              .reduce((acc, val) => acc + val, "");
+            logger.info(`Compiled virtual config \n${config}`)
+          }
+        );
+      }
+      else
+      logger.info(
+        `Writing configuration to ${setting.path} \n${setting.content}\n`
+      );
     });
   }
 }

@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "npm run build && node build/index.js install openscad -m PACMAN -d",
+    "start": "npm run build && node build/index.js install urxvt -m PACMAN -d",
     "help": "npm run build && node build/index.js install --help",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

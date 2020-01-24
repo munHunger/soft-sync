@@ -1,0 +1,14 @@
+name: "Pulseaudio"
+packages:
+  - name: "pulseaudio"
+    alternatives:
+      - name: "pulseaudio"
+        manager: PACMAN
+  - name: "bluetooth adapter"
+    alternatives:
+      - name: "pulseaudio-bluetooth"
+        manager: PACMAN
+  - name: "gui"
+    alternatives:
+      - name: "pavucontrol"
+        manager: PACMAN
