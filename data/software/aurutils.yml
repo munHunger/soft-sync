@@ -1,0 +1,32 @@
+name: "aurutils package helper"
+settings: &settings
+  - path: /etc/pacman.d/aurpkgs
+    content: |-
+      [options]
+      CacheDir = /var/cache/pacman/pkg
+      CacheDir = /var/cache/pacman/aurpkgs
+      CleanMethod = KeepCurrent
+
+      [aurpkgs]
+      SigLevel = Optional TrustAll
+      Server = file:///var/cache/pacman/aurpkgs
+  - path: /etc/pacman.conf
+    content: |-
+      /etc/pacman.d/aurpkgs
+    position:
+      type: NON_MANAGED_END
+install:
+  - |-
+    cd /tmp
+    git clone https://aur.archlinux.org/aurutils.git
+    cd aurutils
+    gpg --recv-key 6BC26A17B9B7018A
+    makepkg -sir --noconfirm
+  - *settings
+  - |-
+    install -d /var/cache/pacman/aurpkgs -o $USER
+    repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
+uninstall:
+  - |-
+    pacman -R aur
+  - *settings

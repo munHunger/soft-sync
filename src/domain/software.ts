@@ -1,50 +1,46 @@
 export enum PositionType {
-    END
+  END,
+  NON_MANAGED_END
 }
 class Position {
-    constructor(
-        public type: PositionType
-    ) {}
+  constructor(public type: PositionType) {}
 }
 
 class Conditional {
-    constructor(
-        public installed: string[]
-    ) {}
+  constructor(public installed: string[]) {}
 }
 
 export class Setting {
-    constructor(
-        public path: string,
-        public content: string,
-        public position: Position,
-        public when: Conditional
-    ) {}
+  constructor(
+    public path: string,
+    public content: string,
+    public position: Position,
+    public when: Conditional
+  ) {}
 }
 
-enum PackageManager {
-    APT, PACMAN, YAY
+export enum PackageManager {
+  APT,
+  PACMAN,
+  YAY,
+  AURUTILS
 }
 
-class Package {
-    constructor(
-        public name: string,
-        public alternatives: PackageAlternative[]
-    ) {}
+export class Package {
+  constructor(public name: string, public alternatives: PackageAlternative[]) {}
 }
 
 class PackageAlternative {
-    constructor(
-        public name: string,
-        public manager: PackageManager
-    ) {}
+  constructor(public name: string, public manager: PackageManager) {}
 }
 
 export class Software {
-    constructor(
-        public name: string,
-        public packages: Package[],
-        public dependencies: string[],
-        public settings: Setting[]
-    ) {}
+  constructor(
+    public name: string,
+    public packages: Package[],
+    public dependencies: string[],
+    public settings: Setting[],
+    public install: (string | Setting)[],
+    public uninstall: (string | Setting)[]
+  ) {}
 }

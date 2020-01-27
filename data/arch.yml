@@ -1,8 +1,14 @@
 name: arch laptop
-manager: PACMAN
+manager:
+  - PACMAN
+  - AURUTILS
 wanted:
+  - aurutils
   - i3
   - urxvt
+  - polybar
 installed:
+  - aurutils
   - i3
   - urxvt
+  - polybar

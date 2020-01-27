@@ -1,42 +1,74 @@
-import { Software } from "./domain/software";
+import { Software, PackageManager, Package } from "./domain/software";
 import { logger } from "./logger";
-import { spawn } from "child_process";
 import { System } from "./domain/system";
 import * as config from "./configuration";
+let shelljs = require("shelljs");
 
-export function install(application: Software, options: any) {
+export function install(
+  application: Software,
+  options: any
+): Promise<Software> {
   logger.info(`Installing ${application.name} using ${options.manager}`);
-  return application.packages
-    .reduce((acc, val) => {
-      return acc.then(() => {
-        let alternative = val.alternatives.filter(
-          alt => alt.manager === options.manager
-        )[0];
-        if (!alternative) {
-          logger.error(
-            `No available alternatives for manager ${options.manager}`,
-            { data: val }
-          );
-          return Promise.reject();
-        }
-        if (options.dryRun) {
-          logger.info(`dryRun: pacman -Ss ${alternative.name}`);
-          return Promise.resolve();
-        }
-        return new Promise((resolve, reject) => {
-          const process = spawn("pacman", ["-Ss", alternative.name]);
-          process.on("exit", code => {
-            logger.info(`Exited ${code}`);
-            resolve();
-          });
-          process.on("error", data => {
-            logger.error(`Failed to install package`, { data });
-            reject();
-          });
-        });
-      });
-    }, Promise.resolve())
+  return installScript(application, options)
+    .then(() => installPackages(application.packages || [], options))
     .then(() => application);
+}
+
+function installScript(application: Software, options: any): Promise<void> {
+  (application.install || []).forEach(step => {
+    if (typeof step === "string") {
+      if (options.dryRun) {
+        logger.info(`dryRun: \n${step}`);
+        return;
+      }
+      if (shelljs.exec(step).code !== 0)
+        throw new Error("Could not install " + application.name);
+    }
+  });
+  return Promise.resolve();
+}
+
+function installPackages(packages: Package[], options: any): Promise<void> {
+  return packages.reduce((acc, val) => {
+    return acc.then(() => {
+      let alternative = val.alternatives.filter(
+        alt => options.manager.indexOf(alt.manager) > -1
+      )[0];
+      if (!alternative) {
+        logger.error(
+          `No available alternatives for package ${val.name} with managers ${options.manager}`,
+          { data: val }
+        );
+        return Promise.reject();
+      }
+      if (options.dryRun) {
+        logger.info(
+          `dryRun: ${getCommand(alternative.name, alternative.manager)}`
+        );
+        return Promise.resolve();
+      }
+
+      if (
+        shelljs.exec(getCommand(alternative.name, alternative.manager)).code !==
+        0
+      )
+        return Promise.reject();
+      return Promise.resolve();
+    });
+  }, Promise.resolve());
+}
+
+function getCommand(app: string, manager: PackageManager) {
+  switch ((<any>PackageManager)[manager]) {
+    case PackageManager.PACMAN:
+      return `pacman -S ${app} --noconfirm --needed`;
+    case PackageManager.YAY:
+      return `runuser munhunger -c 'yay -S ${app}'`;
+    case PackageManager.AURUTILS:
+      return `aur sync -c ${app} && pacman -Syu && pacman -S ${app}`;
+    default:
+      logger.error(`The manager ${manager} is currently not supported`);
+  }
 }
 
 export function installWanted(system: System, options: any): Promise<System> {
