@@ -58,10 +58,9 @@ function configure(system: System, options: any): Promise<System> {
           )
       )
       .forEach(setting => {
-        logger.info(`checking setting ${setting.position.type == PositionType.END} ${setting.position.type keyof  === PositionType.END}`, {data:setting.position.type});
-        if (setting.position.type == PositionType.END) {
+        if ((<any>PositionType)[setting.position.type] === PositionType.END) {
           logger.info(`Adding settings to ${setting.path}`);
-          virtualSettings[setting.path] += setting.content;
+          virtualSettings[setting.path] += "\n" + setting.content;
         }
       });
     logger.info(`Data with conditional settings`, { data: virtualSettings });
