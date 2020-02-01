@@ -84,7 +84,7 @@ function getCommand(app: string, manager: PackageManager) {
     case PackageManager.YAY:
       return `runuser munhunger -c 'yay -S ${app}'`;
     case PackageManager.AURUTILS:
-      return `aur sync -c ${app} && pacman -Syu && pacman -S ${app}`;
+      return `runuser munhunger -c 'aur sync -c ${app} && pacman -Syu && pacman -S ${app}'`;
     default:
       logger.error(`The manager ${manager} is currently not supported`);
   }
