@@ -22,9 +22,8 @@ install:
     cd /tmp
     git clone https://aur.archlinux.org/aurutils.git
     cd aurutils
-    gpg --recv-key 6BC26A17B9B7018A
     chown -R munhunger ./
-    makepkg -sir --noconfirm
+    makepkg -sir --noconfirm --skippgpcheck
   - *settings
   - |-
     install -d /var/cache/pacman/aurpkgs -o $USER
