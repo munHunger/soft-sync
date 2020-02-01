@@ -24,7 +24,8 @@ install:
     cd aurutils
     gpg --recv-key 6BC26A17B9B7018A
     chown -R munhunger ./
-    runuser munhunger -c 'makepkg -sir --noconfirm'
+    runuser munhunger -c 'makepkg'
+    pacman -S jq expac diffstat pacutils parallel wget aurutils --noconfirm
   - *settings
   - |-
     install -d /var/cache/pacman/aurpkgs -o $USER
