@@ -23,6 +23,7 @@ install:
     git clone https://aur.archlinux.org/aurutils.git
     cd aurutils
     gpg --recv-key 6BC26A17B9B7018A
+    chown -R munhunger ./
     runuser munhunger -c 'makepkg -sir --noconfirm'
   - *settings
   - |-
