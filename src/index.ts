@@ -4,10 +4,11 @@ import yargs from "yargs";
 import { System } from "./domain/system";
 import * as installer from "./installer";
 import * as config from "./configuration";
+import { configure } from "./configuration";
 
 yargs.command(
   "sync [system]",
-  "sync the local machine again",
+  "sync the local machine",
   yargs => {
     yargs
       .positional("system", {
@@ -18,6 +19,12 @@ yargs.command(
         default: false,
         type: "boolean",
         alias: "d"
+      })
+      .option("force", {
+        describe: "force a reinstall",
+        default: false,
+        type: "boolean",
+        alias: "f"
       });
   },
   argv => {
@@ -25,45 +32,10 @@ yargs.command(
       .readSystem(argv.system as string)
       .then(async system => {
         logger.info("Read system info", { data: system });
-        if (!system.installed) system.installed = [];
+        if (!system.installed || argv.force) system.installed = [];
         return installer.installWanted(system, argv);
       })
-      .then(system => configure(system, argv))
+      .then(system => configure(system, argv).then(() => system))
       .then(system => config.saveConfig(argv.system as string, system));
   }
 ).argv;
-
-function configure(system: System, options: any): Promise<System> {
-  Promise.all(
-    (system.installed || []).map(name =>
-      config.readConfig(name).then(data => ({ ...data, name }))
-    )
-  ).then(settings => {
-    let virtualSettings: any = {};
-    settings
-      .map(s => s.settings)
-      .reduce((acc, val) => acc.concat(val), [])
-      .filter(setting => !setting.when)
-      .forEach(setting => (virtualSettings[setting.path] = setting.content));
-    logger.info(`Data from unconditional settings`, { data: virtualSettings });
-
-    settings
-      .map(s => s.settings)
-      .reduce((acc, val) => acc.concat(val), [])
-      .filter(
-        setting =>
-          setting.when &&
-          setting.when.installed.every(
-            pkg => system.installed.indexOf(pkg) > -1
-          )
-      )
-      .forEach(setting => {
-        if ((<any>PositionType)[setting.position.type] === PositionType.END) {
-          logger.info(`Adding settings to ${setting.path}`);
-          virtualSettings[setting.path] += "\n" + setting.content;
-        }
-      });
-    logger.info(`Data with conditional settings`, { data: virtualSettings });
-  });
-  return Promise.resolve(system);
-}

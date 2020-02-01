@@ -2,7 +2,11 @@ name: "i3 window manager"
 packages:
   - name: "i3wm"
     alternatives:
-      - name: "rxvt-unicode"
+      - name: "i3-wm"
+        manager: PACMAN
+  - name: "i3gaps"
+    alternatives:
+      - name: "i3-gaps"
         manager: PACMAN
 settings:
   - path: ~/.config/i3/config

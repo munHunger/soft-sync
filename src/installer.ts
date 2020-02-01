@@ -1,4 +1,4 @@
-import { Software, PackageManager, Package } from "./domain/software";
+import { Software, PackageManager, Package, Setting } from "./domain/software";
 import { logger } from "./logger";
 import { System } from "./domain/system";
 import * as config from "./configuration";
@@ -6,26 +6,45 @@ let shelljs = require("shelljs");
 
 export function install(
   application: Software,
+  system: System,
   options: any
 ): Promise<Software> {
   logger.info(`Installing ${application.name} using ${options.manager}`);
-  return installScript(application, options)
+  return installScript(application, system, options)
     .then(() => installPackages(application.packages || [], options))
     .then(() => application);
 }
 
-function installScript(application: Software, options: any): Promise<void> {
-  (application.install || []).forEach(step => {
+function installScript(
+  application: Software,
+  system: System,
+  options: any
+): Promise<void> {
+  return (application.install || []).reduce((acc, step) => {
     if (typeof step === "string") {
-      if (options.dryRun) {
-        logger.info(`dryRun: \n${step}`);
-        return;
-      }
-      if (shelljs.exec(step).code !== 0)
-        throw new Error("Could not install " + application.name);
+      return acc.then(() => {
+        if (options.dryRun) {
+          logger.info(`dryRun: \n${step}`);
+          return Promise.resolve();
+        }
+        if (shelljs.exec(step).code !== 0)
+          return Promise.reject("Could not install " + application.name);
+      });
     }
-  });
-  return Promise.resolve();
+    return acc.then(() =>
+      config
+        .configure(system, options)
+        .then(virtualConf =>
+          ((step as unknown) as Setting[]).forEach(setting =>
+            logger.info(
+              `writing settings for ${setting.path}\n${
+                virtualConf[setting.path]
+              }`
+            )
+          )
+        )
+    );
+  }, Promise.resolve());
 }
 
 function installPackages(packages: Package[], options: any): Promise<void> {
@@ -76,7 +95,9 @@ export function installWanted(system: System, options: any): Promise<System> {
   if (!app) return Promise.resolve(system);
   return config
     .readConfig(app)
-    .then(config => install(config, { ...options, manager: system.manager }))
+    .then(config =>
+      install(config, system, { ...options, manager: system.manager })
+    )
     .then(() => {
       system.installed.push(app);
       return system;

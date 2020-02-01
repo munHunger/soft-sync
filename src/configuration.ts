@@ -1,7 +1,8 @@
 import { promises as fs } from "fs";
 import { System } from "./domain/system";
 import yaml from "js-yaml";
-import { Software } from "./domain/software";
+import { logger } from "./logger";
+import { Software, PositionType } from "./domain/software";
 
 export function saveConfig(name: string, system: System): Promise<void> {
   return fs.writeFile(`./data/${name}.yml`, yaml.dump(system));
@@ -19,4 +20,54 @@ export function readConfig(name: string): Promise<Software> {
     .readFile(`./data/software/${name}.yml`, "utf-8")
     .then(data => yaml.load(data))
     .then(data => data as Software);
+}
+
+function generateInstallList(system: System): Promise<string[]> {
+  return Promise.all(
+    []
+      .concat(system.installed)
+      .concat(system.wanted)
+      .map(app =>
+        readConfig(app).then(appConf => [app].concat(appConf.dependencies))
+      )
+  ).then(apps =>
+    [...new Set(apps.reduce((acc, val) => acc.concat(val), []))].filter(a => a)
+  );
+}
+
+export function configure(system: System, options: any): Promise<any> {
+  return generateInstallList(system).then(installList => {
+    logger.info(`generated install list`, { data: installList });
+    return Promise.all(
+      installList.map(name =>
+        readConfig(name).then(data => ({ ...data, name }))
+      )
+    ).then(settings => {
+      let virtualSettings: any = {};
+      settings
+        .map(s => s.settings)
+        .reduce((acc, val) => acc.concat(val), [])
+        .filter(s => s)
+        .filter(setting => !setting.when)
+        .forEach(setting => (virtualSettings[setting.path] = setting.content));
+
+      settings
+        .map(s => s.settings)
+        .reduce((acc, val) => acc.concat(val), [])
+        .filter(s => s)
+        .filter(
+          setting =>
+            setting.when &&
+            setting.when.installed.every(pkg => installList.indexOf(pkg) > -1)
+        )
+        .forEach(setting => {
+          if ((<any>PositionType)[setting.position.type] === PositionType.END) {
+            logger.debug(`Adding settings to ${setting.path}`);
+            virtualSettings[setting.path] += "\n" + setting.content;
+          }
+        });
+      logger.debug(`Data with conditional settings`, { data: virtualSettings });
+      return Promise.resolve(virtualSettings);
+    });
+  });
 }
