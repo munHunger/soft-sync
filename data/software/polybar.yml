@@ -2,6 +2,7 @@ name: "polybar statusbar"
 dependencies:
   - i3
   - pulseaudio
+  - aurutils
 packages:
   - name: "jsoncpp"
     alternatives:

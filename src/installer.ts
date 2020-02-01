@@ -91,16 +91,32 @@ function getCommand(app: string, manager: PackageManager) {
 }
 
 export function installWanted(system: System, options: any): Promise<System> {
-  let app = system.wanted.filter(app => system.installed.indexOf(app) < 0)[0];
-  if (!app) return Promise.resolve(system);
-  return config
-    .readConfig(app)
-    .then(config =>
-      install(config, system, { ...options, manager: system.manager })
-    )
-    .then(() => {
-      system.installed.push(app);
-      return system;
-    })
-    .then(system => installWanted(system, options));
+  return config.generateInstallList(system).then(installList =>
+    config
+      .readConfigForApps(
+        installList.filter(app => system.installed.indexOf(app) < 0)
+      )
+      .then(apps =>
+        apps.filter(app =>
+          ((app.config as Software).dependencies || []).every(
+            dep => system.installed.indexOf(dep) > -1
+          )
+        )
+      )
+      .then(app => app[0])
+      .then(app => {
+        if (!app) return Promise.resolve(system);
+        app = app.name as string;
+        return config
+          .readConfig(app)
+          .then(config =>
+            install(config, system, { ...options, manager: system.manager })
+          )
+          .then(() => {
+            system.installed.push(app);
+            return system;
+          })
+          .then(system => installWanted(system, options));
+      })
+  );
 }

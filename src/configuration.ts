@@ -3,6 +3,7 @@ import { System } from "./domain/system";
 import yaml from "js-yaml";
 import { logger } from "./logger";
 import { Software, PositionType } from "./domain/software";
+import { promises } from "dns";
 
 export function saveConfig(name: string, system: System): Promise<void> {
   return fs.writeFile(`./data/${name}.yml`, yaml.dump(system));
@@ -22,7 +23,19 @@ export function readConfig(name: string): Promise<Software> {
     .then(data => data as Software);
 }
 
-function generateInstallList(system: System): Promise<string[]> {
+export function readConfigForApps(names: string[]): Promise<any[]> {
+  return names
+    .map(name => ({ name, config: readConfig(name) }))
+    .reduce(
+      (acc, val) =>
+        acc.then(d =>
+          val.config.then(config => d.concat({ name: val.name, config }))
+        ),
+      Promise.resolve([])
+    );
+}
+
+export function generateInstallList(system: System): Promise<string[]> {
   return Promise.all(
     []
       .concat(system.installed)
