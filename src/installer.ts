@@ -78,11 +78,11 @@ function installPackages(packages: Package[], options: any): Promise<void> {
 function getCommand(app: string, manager: PackageManager) {
   switch ((<any>PackageManager)[manager]) {
     case PackageManager.PACMAN:
-      return `pacman -S ${app} --noconfirm --needed`;
+      return `sudo pacman -S ${app} --noconfirm --needed`;
     case PackageManager.YAY:
-      return `runuser munhunger -c 'yay -S ${app}'`;
+      return `yay -S ${app}`;
     case PackageManager.AURUTILS:
-      return `runuser munhunger -c 'aur sync -c ${app} && pacman -Syu && pacman -S ${app}'`;
+      return `aur sync -c ${app} && pacman -Syu && pacman -S ${app}`;
     default:
       logger.error(`The manager ${manager} is currently not supported`);
   }

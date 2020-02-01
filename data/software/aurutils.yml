@@ -24,13 +24,12 @@ install:
     cd aurutils
     gpg --recv-key 6BC26A17B9B7018A
     chown -R munhunger ./
-    runuser munhunger -c 'makepkg'
-    pacman -S jq expac diffstat pacutils parallel wget aurutils --noconfirm
+    makepkg -sir --noconfirm
   - *settings
   - |-
     install -d /var/cache/pacman/aurpkgs -o $USER
-    repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
+    sudo repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
 uninstall:
   - |-
-    pacman -R aur
+    sudo pacman -R aur
   - *settings
