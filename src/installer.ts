@@ -3,6 +3,7 @@ import { logger } from "./logger";
 import { System } from "./domain/system";
 import * as config from "./configuration";
 import * as exec from "child_process";
+import { promises as fs } from "fs";
 
 export function install(
   application: Software,
@@ -27,24 +28,32 @@ function installScript(
           logger.info(`dryRun: \n${step}`);
           return Promise.resolve();
         }
-        exec.execSync(step, { stdio: "inherit" });
+        runScriptAsNonRoot(step);
         return Promise.resolve();
       });
     }
     return acc.then(() =>
-      config
-        .configure(system, options)
-        .then(virtualConf =>
-          ((step as unknown) as Setting[]).forEach(setting =>
-            logger.info(
-              `writing settings for ${setting.path}\n${
-                virtualConf[setting.path]
-              }`
-            )
-          )
-        )
+      config.configure(system, options).then(virtualConf =>
+        ((step as unknown) as Setting[]).reduce((acc, setting) => {
+          logger.info(
+            `writing settings for ${setting.path}\n${virtualConf[setting.path]}`
+          );
+          if (!options.dryRun) {
+            return acc.then(() =>
+              fs.writeFile(setting.path, virtualConf[setting.path])
+            );
+          } else return acc;
+        }, Promise.resolve())
+      )
     );
   }, Promise.resolve());
+}
+
+function runScriptAsNonRoot(script: string) {
+  exec.execSync(script, {
+    stdio: "inherit",
+    uid: parseInt(exec.execSync("echo $UID").toString())
+  });
 }
 
 function installPackages(packages: Package[], options: any): Promise<void> {
@@ -67,9 +76,7 @@ function installPackages(packages: Package[], options: any): Promise<void> {
         return Promise.resolve();
       }
 
-      exec.execSync(getCommand(alternative.name, alternative.manager), {
-        stdio: "inherit"
-      });
+      runScriptAsNonRoot(getCommand(alternative.name, alternative.manager));
       return Promise.resolve();
     });
   }, Promise.resolve());
