@@ -2,7 +2,7 @@ import { Software, PackageManager, Package, Setting } from "./domain/software";
 import { logger } from "./logger";
 import { System } from "./domain/system";
 import * as config from "./configuration";
-let shelljs = require("shelljs");
+import * as exec from "child_process";
 
 export function install(
   application: Software,
@@ -27,8 +27,8 @@ function installScript(
           logger.info(`dryRun: \n${step}`);
           return Promise.resolve();
         }
-        if (shelljs.exec(step).code !== 0)
-          return Promise.reject("Could not install " + application.name);
+        exec.execSync(step, { stdio: "inherit" });
+        return Promise.resolve();
       });
     }
     return acc.then(() =>
@@ -67,11 +67,9 @@ function installPackages(packages: Package[], options: any): Promise<void> {
         return Promise.resolve();
       }
 
-      if (
-        shelljs.exec(getCommand(alternative.name, alternative.manager)).code !==
-        0
-      )
-        return Promise.reject();
+      exec.execSync(getCommand(alternative.name, alternative.manager), {
+        stdio: "inherit"
+      });
       return Promise.resolve();
     });
   }, Promise.resolve());
