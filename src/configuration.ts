@@ -3,7 +3,6 @@ import { System } from "./domain/system";
 import yaml from "js-yaml";
 import { logger } from "./logger";
 import { Software, PositionType } from "./domain/software";
-import { promises } from "dns";
 
 export function saveConfig(name: string, system: System): Promise<void> {
   return fs.writeFile(`./data/${name}.yml`, yaml.dump(system));

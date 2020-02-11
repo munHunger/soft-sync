@@ -5,6 +5,17 @@ import * as config from "./configuration";
 import * as exec from "child_process";
 import { promises as fs } from "fs";
 
+export function uninstall(
+  application: Software,
+  system: System,
+  options: any
+): Promise<Software> {
+  logger.info(`Uninstalling ${application.name} using ${options.manager}`);
+  return uninstallScript(application, system, options)
+    .then(() => uninstallPackages(application.packages || [], options))
+    .then(() => application);
+}
+
 export function install(
   application: Software,
   system: System,
@@ -49,6 +60,26 @@ function installScript(
   }, Promise.resolve());
 }
 
+function uninstallScript(
+  application: Software,
+  system: System,
+  options: any
+): Promise<void> {
+  return (application.uninstall || []).reduce((acc, step) => {
+    if (typeof step === "string") {
+      return acc.then(() => {
+        if (options.dryRun) {
+          logger.info(`dryRun: \n${step}`);
+          return Promise.resolve();
+        }
+        runScriptAsNonRoot(step);
+        return Promise.resolve();
+      });
+    }
+    return Promise.reject("removing settings not yet supported");
+  }, Promise.resolve());
+}
+
 function runScriptAsNonRoot(script: string) {
   exec.execSync(script, {
     stdio: "inherit",
@@ -71,18 +102,63 @@ function installPackages(packages: Package[], options: any): Promise<void> {
       }
       if (options.dryRun) {
         logger.info(
-          `dryRun: ${getCommand(alternative.name, alternative.manager)}`
+          `dryRun: ${getInstallCommand(alternative.name, alternative.manager)}`
         );
         return Promise.resolve();
       }
 
-      runScriptAsNonRoot(getCommand(alternative.name, alternative.manager));
+      runScriptAsNonRoot(
+        getInstallCommand(alternative.name, alternative.manager)
+      );
       return Promise.resolve();
     });
   }, Promise.resolve());
 }
 
-function getCommand(app: string, manager: PackageManager) {
+function uninstallPackages(packages: Package[], options: any): Promise<void> {
+  return packages.reduce((acc, val) => {
+    return acc.then(() => {
+      let alternative = val.alternatives.filter(
+        alt => options.manager.indexOf(alt.manager) > -1
+      )[0];
+      if (!alternative) {
+        logger.error(
+          `No available alternatives for package ${val.name} with managers ${options.manager}`,
+          { data: val }
+        );
+        return Promise.reject();
+      }
+      if (options.dryRun) {
+        logger.info(
+          `dryRun: ${getUninstallCommand(
+            alternative.name,
+            alternative.manager
+          )}`
+        );
+        return Promise.resolve();
+      }
+
+      runScriptAsNonRoot(
+        getUninstallCommand(alternative.name, alternative.manager)
+      );
+      return Promise.resolve();
+    });
+  }, Promise.resolve());
+}
+
+function getUninstallCommand(app: string, manager: PackageManager) {
+  switch ((<any>PackageManager)[manager]) {
+    case PackageManager.AURUTILS:
+    case PackageManager.PACMAN:
+      return `sudo pacman -R ${app} --noconfirm`;
+    case PackageManager.YAY:
+      return `yay -R ${app}`;
+    default:
+      logger.error(`The manager ${manager} is currently not supported`);
+  }
+}
+
+function getInstallCommand(app: string, manager: PackageManager) {
   switch ((<any>PackageManager)[manager]) {
     case PackageManager.PACMAN:
       return `sudo pacman -S ${app} --noconfirm --needed`;
