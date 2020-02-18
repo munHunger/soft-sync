@@ -51,8 +51,7 @@ function installScript(
 
 function runScriptAsNonRoot(script: string) {
   exec.execSync(script, {
-    stdio: "inherit",
-    uid: parseInt(exec.execSync("echo $UID").toString())
+    stdio: "inherit"
   });
 }
 
@@ -89,7 +88,7 @@ function getCommand(app: string, manager: PackageManager) {
     case PackageManager.YAY:
       return `yay -S ${app}`;
     case PackageManager.AURUTILS:
-      return `aur sync -c ${app} && pacman -Syu && pacman -S ${app}`;
+      return `aur sync -c ${app} && sudo pacman -Syu && sudo pacman -S ${app}`;
     default:
       logger.error(`The manager ${manager} is currently not supported`);
   }
