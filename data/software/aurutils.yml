@@ -26,13 +26,13 @@ install:
     makepkg -sir --noconfirm --skippgpcheck
   - *settings
   - |-
-    sudo echo "Include = /etc/pacman.d/aurpkgs" >> /etc/pacman.conf
     sudo mkdir -p /var/cache/pacman/aurpkgs
     sudo install -d /var/cache/pacman/aurpkgs -o $USER
     sudo repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
     sudo pacman -S pkgfile --noconfirm
     sudo pkgfile --update
     sudo pkgfile pacconf
+    sudo echo "Include = /etc/pacman.d/aurpkgs" >> /etc/pacman.conf
     sudo pacman -Syu
 uninstall:
   - |-
