@@ -44,6 +44,7 @@ function installScript(
         return Promise.resolve();
       });
     }
+    logger.info(`Step is not a script ${typeof step}`)
     return acc.then(() =>
       config.configure(system, options).then(virtualConf =>
         ((step as unknown) as Setting[]).reduce((acc, setting) => {
