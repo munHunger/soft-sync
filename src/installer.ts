@@ -3,6 +3,7 @@ import { logger } from "./logger";
 import { System } from "./domain/system";
 import * as config from "./configuration";
 import * as exec from "child_process";
+import { settings } from "cluster";
 let fs = require("sudo-fs-promise");
 
 export function uninstall(
@@ -51,7 +52,7 @@ function installScript(
           );
           if (!options.dryRun) {
             return acc.then(() =>
-              fs.writeFile(setting.path, virtualConf[setting.path])
+              runScriptAsNonRoot(`echo << EOF\n ${virtualConf[setting.path]} \n EOF | sudo tee ${setting.path}`)
             );
           } else return acc;
         }, Promise.resolve())
