@@ -35,8 +35,8 @@ function installScript(
 ): Promise<void> {
   return (application.install || []).reduce((acc, step) => {
     if (typeof step === "string") {
-      logger.info(`Step is a script`);
       return acc.then(() => {
+        logger.info(`Step is a script`);
         if (options.dryRun) {
           logger.info(`dryRun: \n${step}`);
           return Promise.resolve();
@@ -45,9 +45,10 @@ function installScript(
         return Promise.resolve();
       });
     }
-    logger.info(`Step is not a script`, { data: step });
-    return acc.then(() =>
-      config.configure(system, options).then(virtualConf => {
+
+    return acc.then(() => {
+      logger.info(`Step is not a script`, { data: step });
+      return config.configure(system, options).then(virtualConf => {
         logger.info(`System configured`, { data: virtualConf });
         return ((step as unknown) as Setting[]).reduce((acc, setting) => {
           logger.info(
@@ -63,8 +64,8 @@ function installScript(
             );
           } else return acc;
         }, Promise.resolve());
-      })
-    );
+      });
+    });
   }, Promise.resolve());
 }
 
