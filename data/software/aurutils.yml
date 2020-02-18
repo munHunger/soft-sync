@@ -6,12 +6,12 @@ settings: &settings
     content: |-
       [options]
       CacheDir = /var/cache/pacman/pkg
-      CacheDir = /var/cache/pacman/custom
+      CacheDir = /var/cache/pacman/aurpkgs
       CleanMethod = KeepCurrent
 
-      [custom]
+      [aurpkgs]
       SigLevel = Optional TrustAll
-      Server = file:///var/cache/pacman/custom
+      Server = file:///var/cache/pacman/aurpkgs
   # - path: /etc/pacman.conf
   #   content: |-
   #     Include = /etc/pacman.d/custom
@@ -26,7 +26,7 @@ install:
     makepkg -sir --noconfirm --skippgpcheck
   - *settings
   - |-
-    echo "Include = /etc/pacman.d/custom" >> /etc/pacman.conf
+    echo "Include = /etc/pacman.d/aurpkgs" >> /etc/pacman.conf
     sudo mkdir -p /var/cache/pacman/aurpkgs
     sudo install -d /var/cache/pacman/aurpkgs -o $USER
     sudo repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
