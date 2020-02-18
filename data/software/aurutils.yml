@@ -1,6 +1,6 @@
 name: "aurutils package helper"
-dependencies:
-  - user
+# dependencies:
+#   - user
 settings: &settings
   - path: /etc/pacman.d/aurpkgs
     content: |-
