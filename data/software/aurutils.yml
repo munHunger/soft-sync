@@ -26,7 +26,7 @@ install:
     makepkg -sir --noconfirm --skippgpcheck
   - *settings
   - |-
-    mkdir -p /var/cache/pacman/aurpkgs
+    sudo mkdir -p /var/cache/pacman/aurpkgs
     install -d /var/cache/pacman/aurpkgs -o $USER
     sudo repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
 uninstall:
