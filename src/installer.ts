@@ -35,6 +35,7 @@ function installScript(
 ): Promise<void> {
   return (application.install || []).reduce((acc, step) => {
     if (typeof step === "string") {
+      logger.info(`Step is a script`);
       return acc.then(() => {
         if (options.dryRun) {
           logger.info(`dryRun: \n${step}`);
@@ -44,20 +45,25 @@ function installScript(
         return Promise.resolve();
       });
     }
-    logger.info(`Step is not a script ${typeof step}`)
+    logger.info(`Step is not a script`, { data: step });
     return acc.then(() =>
-      config.configure(system, options).then(virtualConf =>
-        ((step as unknown) as Setting[]).reduce((acc, setting) => {
+      config.configure(system, options).then(virtualConf => {
+        logger.info(`System configured`, { data: virtualConf });
+        return ((step as unknown) as Setting[]).reduce((acc, setting) => {
           logger.info(
             `writing settings for ${setting.path}\n${virtualConf[setting.path]}`
           );
           if (!options.dryRun) {
             return acc.then(() =>
-              runScriptAsNonRoot(`echo << EOF\n ${virtualConf[setting.path]} \n EOF | sudo tee ${setting.path}`)
+              runScriptAsNonRoot(
+                `echo << EOF\n ${virtualConf[setting.path]} \n EOF | sudo tee ${
+                  setting.path
+                }`
+              )
             );
           } else return acc;
-        }, Promise.resolve())
-      )
+        }, Promise.resolve());
+      })
     );
   }, Promise.resolve());
 }
