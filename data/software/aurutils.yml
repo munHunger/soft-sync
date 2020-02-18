@@ -32,7 +32,7 @@ install:
     sudo pacman -S pkgfile --noconfirm
     sudo pkgfile --update
     sudo pkgfile pacconf
-    sudo echo "Include = /etc/pacman.d/aurpkgs" >> /etc/pacman.conf
+    echo "Include = /etc/pacman.d/aurpkgs" | sudo tee -a /etc/pacman.conf
     sudo pacman -Syu
 uninstall:
   - |-
