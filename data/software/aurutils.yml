@@ -39,4 +39,4 @@ install:
 uninstall:
   - |-
     sudo pacman -R aur
-  - *settings
+  - *aurpkgs

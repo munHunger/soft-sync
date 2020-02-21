@@ -19,7 +19,8 @@ export function readConfig(name: string): Promise<Software> {
   return fs
     .readFile(`./data/software/${name}.yml`, "utf-8")
     .then(data => yaml.load(data))
-    .then(data => data as Software);
+    .then(data => data as Software)
+    .then(software => Software.validate(software));
 }
 
 export function readConfigForApps(names: string[]): Promise<any[]> {

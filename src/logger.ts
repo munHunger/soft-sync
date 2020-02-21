@@ -35,5 +35,6 @@ const format = winston.format.printf(
 
 export const logger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), format),
-  transports: [new winston.transports.Console()]
+  transports: [new winston.transports.Console()],
+  level: 'debug'
 });
