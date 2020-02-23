@@ -20,6 +20,7 @@ settings:
   #   position:
   #     type: NON_MANAGED_END
 install:
+  - *aurpkgs
   - |-
     cd /tmp
     git clone https://aur.archlinux.org/aurutils.git
