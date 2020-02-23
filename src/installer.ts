@@ -3,8 +3,6 @@ import { logger } from "./logger";
 import { System } from "./domain/system";
 import * as config from "./configuration";
 import * as exec from "child_process";
-import { settings } from "cluster";
-let fs = require("sudo-fs-promise");
 
 export function uninstall(
   application: Software,
