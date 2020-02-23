@@ -52,9 +52,9 @@ function installScript(
         logger.info(
           `writing settings for ${setting.path}\n${virtualConf[setting.path]}`
         );
-        let script = `cat << EOF\n ${
+        let script = `cat << virtualConf\n ${
           virtualConf[setting.path]
-        } \nEOF | sudo tee ${setting.path}`;
+        } \nvirtualConf | sudo tee ${setting.path}`;
         if (!options.dryRun) {
           runScriptAsNonRoot(script);
         } else logger.info(`dryRun: \n${script}`);
