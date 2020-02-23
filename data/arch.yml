@@ -3,8 +3,8 @@ manager:
   - PACMAN
   - AURUTILS
 wanted:
-  # - i3
-  # - urxvt
-  # - polybar
   - aurutils
+  - i3
+  - urxvt
+  - polybar
 installed:
