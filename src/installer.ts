@@ -54,7 +54,7 @@ function installScript(
         );
         let script = `echo << EOF\n ${
           virtualConf[setting.path]
-        } \n EOF | sudo tee ${setting.path}`;
+        } \nEOF | sudo tee ${setting.path}`;
         if (!options.dryRun) {
           runScriptAsNonRoot(script);
         } else logger.info(`dryRun: \n${script}`);
