@@ -1,9 +1,6 @@
 import { PackageManager } from "./software";
-import { ArrayNotEmpty, Length } from "class-validator";
 export class System {
-  @ArrayNotEmpty()
   public manager: PackageManager[];
-  @Length(1)
   public name: string;
 
   public wanted: string[];
