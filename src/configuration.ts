@@ -79,7 +79,6 @@ export function configure(system: System, options: any): Promise<any> {
             virtualSettings[setting.path] += "\n" + setting.content;
           }
         });
-      logger.debug(`Data with conditional settings`, { data: virtualSettings });
       return Promise.resolve(virtualSettings);
     });
   });

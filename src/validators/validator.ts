@@ -13,10 +13,16 @@ export function notEmpty(value: any, propertyName: string): string {
   }
 }
 
-export function customCheck(value: any, checkFun: (value: any) => boolean, propertyName: string): string {
-    if(checkFun.apply({}, [value])) {
-        let err = `Property ${propertyName} did not pass custom check`;
-        logger.error(err);
-        return err;
+export function customCheck(
+  value: any,
+  checkFun: (value: any) => Promise<boolean>,
+  propertyName: string
+): Promise<string> {
+  return (checkFun.apply({}, [value]) as Promise<boolean>).then(valid => {
+    if (valid) {
+      let err = `Property ${propertyName} did not pass custom check`;
+      logger.error(err);
+      return err;
     }
+  });
 }

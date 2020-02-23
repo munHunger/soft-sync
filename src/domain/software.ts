@@ -1,13 +1,3 @@
-import {
-  IsNotEmpty,
-  IsInstance,
-  ValidationOptions,
-  registerDecorator,
-  ValidationArguments,
-  ValidateNested,
-  ValidationSchema,
-  registerSchema
-} from "class-validator";
 import { notEmpty, customCheck } from "../validators/validator";
 
 export enum PositionType {
@@ -23,9 +13,7 @@ class Conditional {
 }
 
 export class Setting {
-  @IsNotEmpty()
   public path: string;
-  @IsNotEmpty()
   public content: string;
   public position: Position;
   public when: Conditional;
@@ -39,6 +27,16 @@ export class Setting {
     this.content = content;
     this.position = position;
     this.when = when;
+  }
+  static validate(setting: Setting): Promise<Setting> {
+    let errors = [
+      notEmpty(setting.path, "path"),
+      notEmpty(setting.content, "content")
+    ]
+      .filter(v => v)
+      .join("\n");
+    if (errors.trim().length > 0) return Promise.reject(errors);
+    return Promise.resolve(setting);
   }
 }
 
@@ -80,7 +78,7 @@ class PackageAlternative {
     ]
       .filter(v => v)
       .join("\n");
-    if (errors) return Promise.reject(errors);
+    if (errors.trim().length > 0) return Promise.reject(errors);
     return Promise.resolve(packageAlternative);
   }
 }
@@ -98,12 +96,31 @@ export class Software {
   static validate(software: Software): Promise<Software> {
     return Promise.all(
       (software.packages || []).map(pkg => Package.validate(pkg))
-    ).then(() => {
-      let errors = [notEmpty(software.name, "name"),
-    customCheck()];
-
-      if (errors) return Promise.reject(errors);
-      return Promise.resolve(software);
-    });
+    )
+      .then(() => {
+        return Promise.all(
+          (software.install || []).map((step, i) =>
+            customCheck(
+              step,
+              install =>
+                Promise.resolve(typeof install === "string")
+                  .then(
+                    valid =>
+                      valid ||
+                      Setting.validate(install as Setting)
+                        .catch(() => false)
+                        .then(() => true)
+                  )
+                  .then(valid => !valid),
+              `install[${i}] ${typeof step}`
+            )
+          )
+        );
+      })
+      .then(() => {
+        let errors = notEmpty(software.name, "name");
+        if (errors) return Promise.reject(errors);
+        return Promise.resolve(software);
+      });
   }
 }

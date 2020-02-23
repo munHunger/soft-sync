@@ -50,20 +50,16 @@ function installScript(
       logger.info(`Step is not a script`, { data: step });
       return config.configure(system, options).then(virtualConf => {
         logger.info(`System configured`, { data: virtualConf });
-        return ((step as unknown) as Setting[]).reduce((acc, setting) => {
-          logger.info(
-            `writing settings for ${setting.path}\n${virtualConf[setting.path]}`
-          );
-          if (!options.dryRun) {
-            return acc.then(() =>
-              runScriptAsNonRoot(
-                `echo << EOF\n ${virtualConf[setting.path]} \n EOF | sudo tee ${
-                  setting.path
-                }`
-              )
-            );
-          } else return acc;
-        }, Promise.resolve());
+        let setting = step as Setting;
+        logger.info(
+          `writing settings for ${setting.path}\n${virtualConf[setting.path]}`
+        );
+        let script = `echo << EOF\n ${
+          virtualConf[setting.path]
+        } \n EOF | sudo tee ${setting.path}`;
+        if (!options.dryRun) {
+          runScriptAsNonRoot(script);
+        } else logger.info(`dryRun: \n${script}`);
       });
     });
   }, Promise.resolve());
@@ -90,6 +86,7 @@ function uninstallScript(
 }
 
 function runScriptAsNonRoot(script: string) {
+  logger.debug(`Running script \n${script}`);
   exec.execSync(script, {
     stdio: "inherit"
   });
