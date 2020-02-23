@@ -52,7 +52,7 @@ function installScript(
         logger.info(
           `writing settings for ${setting.path}\n${virtualConf[setting.path]}`
         );
-        let script = `echo << EOF\n ${
+        let script = `cat << EOF\n ${
           virtualConf[setting.path]
         } \nEOF | sudo tee ${setting.path}`;
         if (!options.dryRun) {
