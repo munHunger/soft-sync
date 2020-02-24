@@ -7,4 +7,7 @@ wanted:
   - i3
   - urxvt
   - polybar
+  - openscad
+  - pulseaudio
+  - rofi
 installed:

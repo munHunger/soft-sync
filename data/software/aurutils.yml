@@ -1,6 +1,4 @@
 name: "aurutils package helper"
-# dependencies:
-#   - user
 aurpkgs: &aurpkgs
   path: /etc/pacman.d/aurpkgs
   content: |-
@@ -14,11 +12,6 @@ aurpkgs: &aurpkgs
     Server = file:///var/cache/pacman/aurpkgs
 settings:
   - *aurpkgs
-  # - path: /etc/pacman.conf
-  #   content: |-
-  #     Include = /etc/pacman.d/custom
-  #   position:
-  #     type: NON_MANAGED_END
 install:
   - *aurpkgs
   - |-
@@ -34,6 +27,7 @@ install:
     sudo install -d /var/cache/pacman/aurpkgs -o $USER
     sudo repo-add /var/cache/pacman/aurpkgs/aurpkgs.db.tar
     sudo pacman -S pkgfile --noconfirm
+    sudo pacman -S devtools --noconfirm
     sudo pkgfile --update
     sudo pkgfile pacconf
     sudo pacman -Syu
