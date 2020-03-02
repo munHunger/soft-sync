@@ -36,7 +36,13 @@ yargs
           if (!system.installed || argv.force) system.installed = [];
           return installer.installWanted(system, argv);
         })
-        .then(system => configure(system, argv).then(() => system))
+        .then(system => configure(system, argv).then(data => {
+          logger.debug(`Virtual Config`, { data })
+          Object.keys(data).forEach(key => {
+            installer.installConfig(key, data[key], argv);
+          })
+          return system
+        }))
         .then(system => {
           if (!argv.dryRun) config.saveConfig(argv.system as string, system);
         })
@@ -54,6 +60,7 @@ yargs
         .positional("application", {
           describe: "The app to install"
         })
+        .option("force", { describe: "force a reinstall", default: false, type: "boolean", alias: "f" })
         .option("dryRun", {
           describe: "Don't do any real changes",
           default: false,

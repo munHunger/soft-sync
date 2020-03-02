@@ -1,0 +1,8 @@
+name: "vscode"
+dependencies:
+  - aurutils
+packages:
+  - name: "code"
+    alternatives:
+      - name: "code-git"
+        manager: AURUTILS

@@ -23,6 +23,7 @@ export function install(
   logger.info(`Installing ${application.name} using ${options.manager}`);
   return installScript(application, system, options)
     .then(() => installPackages(application.packages || [], options))
+    .then(() => (application.settings || []).forEach(setting => writeConfig(setting, options)))
     .then(() => application);
 }
 
@@ -54,13 +55,27 @@ function installScript(
         );
         let script = `conf=$(cat << virtualConf\n${
           virtualConf[setting.path]
-        }\nvirtualConf\n); echo "$conf" | sudo tee ${setting.path}`;
+          }\nvirtualConf\n); echo "$conf" | sudo tee ${setting.path}`;
         if (!options.dryRun) {
           runScriptAsNonRoot(script);
         } else logger.info(`dryRun: \n${script}`);
       });
     });
   }, Promise.resolve());
+}
+
+function writeConfig(config: Setting, options: any) {
+  installConfig(config.path, config.content, options);
+}
+
+export function installConfig(path: String, content: String, options: any) { //TODO: Needs to be able to create folder if not exists
+  logger.info(`writing setting for ${path}`);
+  let script = `conf=$(cat << virtualConf\n${content}\nvirtualConf\n); echo "$conf" | sudo tee ${path}`;
+  if (!options.dryRun) {
+    runScriptAsNonRoot(script);
+  }
+  else
+    logger.info(`dryRun: \n${script}`);
 }
 
 function uninstallScript(

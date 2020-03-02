@@ -10,4 +10,22 @@ wanted:
   - openscad
   - pulseaudio
   - rofi
+  - code
+  - arandr
+  - nvidia
+  - chrome
+  - x
+  - fonts
 installed:
+  - aurutils
+  - urxvt
+  - pulseaudio
+  - polybar
+  - openscad
+  - rofi
+  - code
+  - arandr
+  - nvidia
+  - i3
+  - chrome
+  - x

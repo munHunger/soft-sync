@@ -1,0 +1,8 @@
+name: "Google chrome"
+dependencies:
+  - aurutils
+packages:
+  - name: "chrome"
+    alternatives:
+      - name: "google-chrome"
+        manager: AURUTILS

@@ -4,10 +4,3 @@ packages:
     alternatives:
       - name: "openscad"
         manager: PACMAN
-      - name: "openscad"
-        manager: YAY
-settings:
-  - path: /tmp/openscad
-    content: |-
-        some content
-        second row

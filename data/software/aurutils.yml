@@ -31,6 +31,7 @@ install:
     sudo pkgfile --update
     sudo pkgfile pacconf
     sudo pacman -Syu
+    sudo chown -R munhunger /var/cache/pacman/aurpkgs
 uninstall:
   - |-
     sudo pacman -R aur

@@ -1,0 +1,6 @@
+name: "Nvidia Video Drivers"
+packages:
+  - name: "nvidia driver"
+    alternatives:
+      - name: "nvidia"
+        manager: PACMAN

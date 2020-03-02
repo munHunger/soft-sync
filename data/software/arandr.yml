@@ -1,0 +1,6 @@
+name: "ArandR"
+packages:
+  - name: "arandr"
+    alternatives:
+      - name: "arandr"
+        manager: PACMAN
