@@ -16,6 +16,7 @@ wanted:
   - chrome
   - x
   - fonts
+  - bashPrompt
 installed:
   - aurutils
   - urxvt

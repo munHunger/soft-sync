@@ -20,11 +20,54 @@ packages:
     alternatives:
       - name: "xorg-server"
         manager: PACMAN
+  - name: "xorg-xrdb"
+    alternatives:
+      - name: "xorg-xrdb"
+        manager: PACMAN
   - name: "xorg-init"
     alternatives:
       - name: "xorg-xinit"
         manager: PACMAN
 settings:
+  - path: /home/munhunger/.Xresources
+    content: |-
+      ! Lazerwave colortheme for rxvt
+      *.background:	 #27212e
+      *.foreground:	 #ffffff
+      *.cursorColor:	 #eb64b927
+      !black
+      *.color0:		 #111111
+      !red
+      *.color1:		 #EB64B9
+      !green
+      *.color2:		 #74dfc4
+      !yellow
+      *.color3:		 #ffe261
+      !blue
+      *.color4:		 #40b4c4
+      !purple
+      *.color5:		 #dc8cc3
+      !cyan
+      *.color6:		 #b4dce7
+      !white
+      *.color7:		 #ffffff
+
+      !black
+      *.color8:		 #111111
+      !red
+      *.color9:		 #EB64B9
+      !green
+      *.color10:		 #74dfc4
+      !yellow
+      *.color11:		 #ffe261
+      !blue
+      *.color12:		 #40b4c4
+      !purple
+      *.color13:		 #dc8cc3
+      !cyan
+      *.color14:		 #b4dce7
+      !white
+      *.color15:		 #ffffff
   - path: /etc/X11/xorg.conf.d/00-keyboard.conf
     content: |-
       Section "InputClass"
@@ -32,6 +75,14 @@ settings:
           MatchIsKeyboard "on"
           Option "XkbLayout" "se"
           Option "XkbModel" "pc105"
+      EndSection
+  - path: /etc/X11/xorg.conf.d/50-synaptics.conf
+    content: |-
+      Section "InputClass"
+          Identifier "touchpad catchall"
+          MatchIsTouchpad "on"
+          Option "TapButton1" "1"
+          Option "TapButton2" "3"
       EndSection
   - path: /etc/X11/xorg.conf.d/50-mouse-acceleration.conf
     content: |-
