@@ -1,0 +1,13 @@
+name: "Wallpaper"
+install:
+  - |-
+    wget -O ~/.config/wallpaper.jpg https://wallpaperaccess.com/full/1398275.jpg
+settings:
+  - path: ~/.config/i3/config
+    content: |-
+      exec --no-startup-id "feh --bg-scale ~/.config/wallpaper.jpg"
+    position:
+      type: END
+      when:
+      installed:
+        - i3
