@@ -25,6 +25,16 @@ settings:
     when:
       installed:
         - i3
+  - path: ~/.config/polybar/launch.sh
+    content: |-
+      #!/bin/bash
+      if type "xrandr"; then
+        for m in \$(xrandr --query | grep " connected" | cut -d" " -f1); do
+          MONITOR=\$m polybar --reload polybar &
+        done
+      else
+        polybar --reload polybar &
+      fi
   - path: ~/.config/polybar/spotify-now
     content: |-
       #!/usr/bin/env bash
@@ -205,9 +215,10 @@ settings:
       alert = \${xrdb:color4:#C714CC}
 
       [bar/poly]
+      monitor = \${env:MONITOR:}
       width = 100%
       height = 27
-      modules-left = memory cpu coffee water
+      modules-left = memory cpu
       modules-center = i3
       modules-right =  spotify battery pulseaudio date powermenu
       radius = 0.0
