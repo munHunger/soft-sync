@@ -70,6 +70,8 @@ function writeConfig(setting: Setting, options: any) {
 
 export function installConfig(path: string, content: string, options: any) { // TODO: Needs to be able to create folder if not exists
   logger.info(`writing setting for ${path}`);
+  const escapeChars = ['$', '`']
+  escapeChars.forEach(char => content = content.split(char).join(`\\${char}`));
   let script = `conf=$(cat << virtualConf\n${content}\nvirtualConf\n); echo "$conf" | sudo tee ${path}`;
   if (!options.dryRun) {
     runScriptAsNonRoot(script);

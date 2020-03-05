@@ -7,7 +7,7 @@ packages:
 settings:
   - path: ~/.config/i3/config
     content: |-
-      bindsym \$mod+Return exec urxvt
+      bindsym $mod+Return exec urxvt
     position:
       type: END
     when:
