@@ -74,7 +74,7 @@ export function configure(system: System, options: any): Promise<any> {
             setting.when.installed.every(pkg => installList.indexOf(pkg) > -1)
         )
         .forEach(setting => {
-          if ((<any>PositionType)[setting.position.type] === PositionType.END) {
+          if ((PositionType as any)[setting.position.type] === PositionType.END) {
             logger.debug(`Adding settings to ${setting.path}`);
             virtualSettings[setting.path] += "\n" + setting.content;
           }

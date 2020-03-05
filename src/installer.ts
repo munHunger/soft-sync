@@ -64,11 +64,11 @@ function installScript(
   }, Promise.resolve());
 }
 
-function writeConfig(config: Setting, options: any) {
-  installConfig(config.path, config.content, options);
+function writeConfig(setting: Setting, options: any) {
+  installConfig(setting.path, setting.content, options);
 }
 
-export function installConfig(path: String, content: String, options: any) { //TODO: Needs to be able to create folder if not exists
+export function installConfig(path: string, content: string, options: any) { // TODO: Needs to be able to create folder if not exists
   logger.info(`writing setting for ${path}`);
   let script = `conf=$(cat << virtualConf\n${content}\nvirtualConf\n); echo "$conf" | sudo tee ${path}`;
   if (!options.dryRun) {
@@ -165,7 +165,7 @@ function uninstallPackages(packages: Package[], options: any): Promise<void> {
 }
 
 function getUninstallCommand(app: string, manager: PackageManager) {
-  switch ((<any>PackageManager)[manager]) {
+  switch ((PackageManager as any)[manager]) {
     case PackageManager.AURUTILS:
     case PackageManager.PACMAN:
       return `sudo pacman -R ${app} --noconfirm`;
@@ -177,7 +177,7 @@ function getUninstallCommand(app: string, manager: PackageManager) {
 }
 
 function getInstallCommand(app: string, manager: PackageManager) {
-  switch ((<any>PackageManager)[manager]) {
+  switch ((PackageManager as any)[manager]) {
     case PackageManager.PACMAN:
       return `sudo pacman -S ${app} --noconfirm --needed`;
     case PackageManager.YAY:
@@ -208,14 +208,14 @@ export function installWanted(system: System, options: any): Promise<System> {
         app = app.name as string;
         return config
           .readConfig(app)
-          .then(config =>
-            install(config, system, { ...options, manager: system.manager })
+          .then(conf =>
+            install(conf, system, { ...options, manager: system.manager })
           )
           .then(() => {
             system.installed.push(app);
             return system;
           })
-          .then(system => installWanted(system, options));
+          .then(sys => installWanted(sys, options));
       })
   );
 }
