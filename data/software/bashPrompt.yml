@@ -48,4 +48,4 @@ settings:
         fi
       }
 
-      export PS1="\[\033[38;5;164m\]\u\[$(tput sgr0)\]\[\033[38;5;178m\]:\[$(tput sgr0)\]\[\033[38;5;122m\]\W\[$(tput sgr0)\]\[\033[38;5;39m\]\`parse_git_branch\`\[$(tput sgr0)\]\[\033[38;5;178m\]\\$\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
+      export PS1="\[\033[38;5;164m\]\u\[$(tput sgr0)\]\[\033[38;5;178m\]:\[$(tput sgr0)\]\[\033[38;5;122m\]\W\[$(tput sgr0)\]\[\033[38;5;39m\]`parse_git_branch`\[$(tput sgr0)\]\[\033[38;5;178m\]\\$\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"

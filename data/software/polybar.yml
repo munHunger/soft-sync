@@ -29,11 +29,11 @@ settings:
     content: |-
       #!/bin/bash
       if type "xrandr"; then
-        for m in \$(xrandr --query | grep " connected" | cut -d" " -f1); do
-          MONITOR=\$m polybar --reload polybar &
+        for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+          MONITOR=$m polybar --reload poly &
         done
       else
-        polybar --reload polybar &
+        polybar --reload poly &
       fi
   - path: ~/.config/polybar/spotify-now
     content: |-
@@ -43,39 +43,39 @@ settings:
 
       # track info
       album () {
-          res=\$(echo "\$META" | grep -m 1 "xesam:album" -b1 | tail -n1)
-          res="\${res%\"*}"
-          res="\${res#*\"}"
-          echo "\$res"
+          res=$(echo "$META" | grep -m 1 "xesam:album" -b1 | tail -n1)
+          res="${res%\"*}"
+          res="${res#*\"}"
+          echo "$res"
       }
       artist () {
-          res=\$(echo "\$META" | grep -m 1 "xesam:artist" -b2 | tail -n1)
-          res="\${res%\"*}"
-          res="\${res#*\"}"
+          res=$(echo "$META" | grep -m 1 "xesam:artist" -b2 | tail -n1)
+          res="${res%\"*}"
+          res="${res#*\"}"
           # if advertisement is playing currently
-          if [[ "\$res" == "" ]]; then
+          if [[ "$res" == "" ]]; then
               echo "Ad"
           else
-              echo "\$res"
+              echo "$res"
           fi
       }
       disc () {
-          res=\$(echo "\$META" | grep -m 1 "xesam:discNumber" -b1 | tail -n1)
-          res="\${res#*3}"
-          res="\${res#*2}"
-          echo "\$res"
+          res=$(echo "$META" | grep -m 1 "xesam:discNumber" -b1 | tail -n1)
+          res="${res#*3}"
+          res="${res#*2}"
+          echo "$res"
       }
       title () {
-          res=\$(echo "\$META" | grep -m 1 "xesam:title" -b1 | tail -n1)
-          res="\${res%\"*}"
-          res="\${res#*\"}"
-          echo "\$res"
+          res=$(echo "$META" | grep -m 1 "xesam:title" -b1 | tail -n1)
+          res="${res%\"*}"
+          res="${res#*\"}"
+          echo "$res"
       }
       track () {
-          res=\$(echo "\$META" | grep -m 1 "xesam:trackNumber" -b1 | tail -n1)
-          res="\${res#*3}"
-          res="\${res#*2}"
-          echo "\$res"
+          res=$(echo "$META" | grep -m 1 "xesam:trackNumber" -b1 | tail -n1)
+          res="${res#*3}"
+          res="${res#*2}"
+          echo "$res"
       }
 
       # error message
@@ -99,29 +99,29 @@ settings:
 
 
       # check args
-      if [[ "\$#"  == 0 ]]; then
+      if [[ "$#"  == 0 ]]; then
           helpMsg
-      elif [[ "\$#" == 1 ]]; then
-          if [[ "\${1}" == "-h" || "\${1}" == "--help" ]]; then
+      elif [[ "$#" == 1 ]]; then
+          if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
               helpMsg
           else
               errorMsg
           fi
-      elif [[ "\$#" > 6 ]]; then
+      elif [[ "$#" > 6 ]]; then
           errorMsg
       fi
-      if [[ "\$#" -ge 2 ]]; then
-          if [[ "\${1}" != "-i" && "\${1}" != "-p" && "\${1}" != "-e" ]]; then
+      if [[ "$#" -ge 2 ]]; then
+          if [[ "${1}" != "-i" && "${1}" != "-p" && "${1}" != "-e" ]]; then
               errorMsg
           fi
       fi
-      if [[ "\$#" -ge 4 ]]; then
-          if [[ "\${3}" != "-i" && "\${3}" != "-p" && "\${3}" != "-e" ]]; then
+      if [[ "$#" -ge 4 ]]; then
+          if [[ "${3}" != "-i" && "${3}" != "-p" && "${3}" != "-e" ]]; then
               errorMsg
           fi
       fi
-      if [[ "\$#" -ge 6 ]]; then
-          if [[ "\${5}" != "-i" && "\${5}" != "-p" && "\${5}" != "-e" ]]; then
+      if [[ "$#" -ge 6 ]]; then
+          if [[ "${5}" != "-i" && "${5}" != "-p" && "${5}" != "-e" ]]; then
               errorMsg
           fi
       fi
@@ -132,56 +132,56 @@ settings:
       PAUSED=""
       ERROR=""
       ESCAPE=false
-      if [[ "\${1}" == "-i" ]]; then
-          INFO="\${2}"
-      elif [[ "\${1}" == "-p" ]]; then
-          PAUSED="\${2}"
-      elif [[ "\${1}" == "-e" ]]; then
-          ERROR="\${2}"
+      if [[ "${1}" == "-i" ]]; then
+          INFO="${2}"
+      elif [[ "${1}" == "-p" ]]; then
+          PAUSED="${2}"
+      elif [[ "${1}" == "-e" ]]; then
+          ERROR="${2}"
       fi
-      if [[ "\${3}" == "-i" ]]; then
-          INFO="\${4}"
-      elif [[ "\${3}" == "-p" ]]; then
-          PAUSED="\${4}"
-      elif [[ "\${3}" == "-e" ]]; then
-          ERROR="\${4}"
+      if [[ "${3}" == "-i" ]]; then
+          INFO="${4}"
+      elif [[ "${3}" == "-p" ]]; then
+          PAUSED="${4}"
+      elif [[ "${3}" == "-e" ]]; then
+          ERROR="${4}"
       fi
-      if [[ "\${5}" == "-i" ]]; then
-          INFO="\${6}"
-      elif [[ "\${5}" == "-p" ]]; then
-          PAUSED="\${6}"
-      elif [[ "\${5}" == "-e" ]]; then
-          ERROR="\${6}"
+      if [[ "${5}" == "-i" ]]; then
+          INFO="${6}"
+      elif [[ "${5}" == "-p" ]]; then
+          PAUSED="${6}"
+      elif [[ "${5}" == "-e" ]]; then
+          ERROR="${6}"
       fi
-      if [[ "\${3}" == "--escape" || "\${5}" == "--escape" || "\${7}" == "--escape" ]]; then
+      if [[ "${3}" == "--escape" || "${5}" == "--escape" || "${7}" == "--escape" ]]; then
           ESCAPE=true
       fi
 
 
       # check if spotify is running
       status=`pidof spotify | wc -l`
-      if [[ "\$status" != 1 && "\$ERROR" != "" ]]; then
-          echo "\$ERROR"
+      if [[ "$status" != 1 && "$ERROR" != "" ]]; then
+          echo "$ERROR"
       else
         playback=`dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus' | grep -o Paused`
-        if [[ "\$playback" == "Paused" && "\$PAUSED" != "" ]]; then
-          echo "\$PAUSED"
-        elif [[ "\$INFO" != "" ]]; then
+        if [[ "$playback" == "Paused" && "$PAUSED" != "" ]]; then
+          echo "$PAUSED"
+        elif [[ "$INFO" != "" ]]; then
             # get mpris2 dbus status of spotify player
             META=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata'`
-            INFO="\${INFO//"%album"/\$(album)}"
-            INFO="\${INFO//"%artist"/\$(artist)}"
-            INFO="\${INFO//"%disc"/\$(disc)}"
-            INFO="\${INFO//"%title"/\$(title)}"
-            INFO="\${INFO//"%track"/\$(track)}"
-          if [ "\$ESCAPE" = true ]; then
-            INFO="\${INFO//&/&amp;}"
-            INFO="\${INFO//</&lt;}"
-            INFO="\${INFO//>/&gt;}"	
-            INFO="\${INFO//\"/&quot;}"
-            INFO="\${INFO//\\/\\\\}"
+            INFO="${INFO//"%album"/$(album)}"
+            INFO="${INFO//"%artist"/$(artist)}"
+            INFO="${INFO//"%disc"/$(disc)}"
+            INFO="${INFO//"%title"/$(title)}"
+            INFO="${INFO//"%track"/$(track)}"
+          if [ "$ESCAPE" = true ]; then
+            INFO="${INFO//&/&amp;}"
+            INFO="${INFO//</&lt;}"
+            INFO="${INFO//>/&gt;}"	
+            INFO="${INFO//\"/&quot;}"
+            INFO="${INFO//\\/\\\\}"
           fi
-          echo \$INFO
+          echo $INFO
         fi
       fi
   - path: ~/.config/polybar/config
@@ -205,25 +205,25 @@ settings:
       ;==========================================================
 
       [colors]
-      background = \${xrdb:color0:#010}
-      background-alt = \${xrdb:color0:#000}
-      foreground = \${xrdb:color7:#A7C9C3}
-      foreground-focus = \${xrdb:color6:#FFC600}
-      foreground-alt = \${xrdb:color8:#555}
-      primary = \${xrdb:color7:#ffb52a}
-      secondary = \${xrdb:color6:#e60053}
-      alert = \${xrdb:color4:#C714CC}
+      background = ${xrdb:color0:#010}
+      background-alt = ${xrdb:color0:#000}
+      foreground = ${xrdb:color7:#A7C9C3}
+      foreground-focus = ${xrdb:color6:#FFC600}
+      foreground-alt = ${xrdb:color8:#555}
+      primary = ${xrdb:color7:#ffb52a}
+      secondary = ${xrdb:color6:#e60053}
+      alert = ${xrdb:color4:#C714CC}
 
       [bar/poly]
-      monitor = \${env:MONITOR:}
+      monitor = ${env:MONITOR:}
       width = 100%
       height = 27
       modules-left = memory cpu
       modules-center = i3
       modules-right =  spotify battery pulseaudio date powermenu
       radius = 0.0
-      background = \${colors.background}
-      foreground = \${colors.foreground}
+      background = ${colors.background}
+      foreground = ${colors.foreground}
       line-size = 3
       border-size = 0
       border-color = #00000000
@@ -244,25 +244,25 @@ settings:
 
       [module/coffee]
       type = custom/script
-      exec = echo "C: \$(if test -f /tmp/coffee; then wc -l /tmp/coffee | cut -f 1 -d ' '; else touch /tmp/coffee; fi)"
+      exec = echo "C: $(if test -f /tmp/coffee; then wc -l /tmp/coffee | cut -f 1 -d ' '; else touch /tmp/coffee; fi)"
       tail = false
       click-left = echo "." >> /tmp/coffee
-      click-right = sed -i '\$ d' /tmp/coffee
+      click-right = sed -i '$ d' /tmp/coffee
 
       [module/water]
       type = custom/script
-      exec = echo "W: \$(if test -f /tmp/water; then wc -l /tmp/water | cut -f 1 -d ' '; else touch /tmp/water; fi)"
+      exec = echo "W: $(if test -f /tmp/water; then wc -l /tmp/water | cut -f 1 -d ' '; else touch /tmp/water; fi)"
       tail = false
       click-left = echo "." >> /tmp/water
-      click-right = sed -i '\$ d' /tmp/water
+      click-right = sed -i '$ d' /tmp/water
 
       [module/cpu]
       type = internal/cpu
       format-prefix =  
       label = " %percentage%%"
       format = <label> <ramp-coreload>
-      format-foreground = \${colors.foreground}
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-foreground = ${colors.foreground}
+      format-prefix-foreground = ${colors.foreground-alt}
       ramp-coreload-spacing = 1
       ramp-coreload-0 = ▁
       ramp-coreload-1 = ▂
@@ -282,12 +282,12 @@ settings:
 
       interval = 2
       format = <label>
-      format-foreground = \${colors.foreground}
+      format-foreground = ${colors.foreground}
       format-padding = 4
 
       label = %output%
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       [module/time]
       type = custom/script
@@ -297,12 +297,12 @@ settings:
 
       interval = 2
       format = <label>
-      format-foreground = \${colors.foreground}
+      format-foreground = ${colors.foreground}
       format-padding = 4
 
       label = %output%
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       [module/lunch]
       type = custom/script
@@ -312,12 +312,12 @@ settings:
 
       interval = 2
       format = <label>
-      format-foreground = \${colors.foreground}
+      format-foreground = ${colors.foreground}
       format-padding = 4
 
       label = %output%
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       [module/locked]
       type = custom/script
@@ -327,12 +327,12 @@ settings:
 
       interval = 2
       format = <label>
-      format-foreground = \${colors.foreground}
+      format-foreground = ${colors.foreground}
       format-padding = 4
 
       label = %output%
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       [module/spotify]
       type = custom/script
@@ -348,7 +348,7 @@ settings:
       ;   <output> - deprecated
       ;   <label> (default)
       format = <label>
-      format-foreground = \${colors.foreground}
+      format-foreground = ${colors.foreground}
       format-padding = 4
 
       ; Available tokens:
@@ -356,7 +356,7 @@ settings:
       ; Default: %output%
       label = %output%
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       [module/bluetooth]
       type = custom/script
@@ -364,8 +364,8 @@ settings:
       ; Available tokens:
       ;   %counter%
       ; Command to be executed (using "/usr/bin/env sh -c [command]")
-      exec = bluetoothctl devices | cut -d ' ' -f 2 | xargs bluetoothctl info \$1 | grep Name | cut -d ' ' -f 2
-      exec-if = bluetoothctl devices | cut -d ' ' -f 2 | xargs bluetoothctl info \$1 | grep Connected | cut -d ' ' -f 2 | grep -q yes
+      exec = bluetoothctl devices | cut -d ' ' -f 2 | xargs bluetoothctl info $1 | grep Name | cut -d ' ' -f 2
+      exec-if = bluetoothctl devices | cut -d ' ' -f 2 | xargs bluetoothctl info $1 | grep Connected | cut -d ' ' -f 2 | grep -q yes
 
       tail = false
 
@@ -374,12 +374,12 @@ settings:
       ;   <output> - deprecated
       ;   <label> (default)
       format = <label>
-      format-foreground = \${colors.foreground}
+      format-foreground = ${colors.foreground}
       format-padding = 4
 
       label = %output%
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       [module/filesystem]
       type = internal/fs
@@ -389,25 +389,25 @@ settings:
 
       label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
       label-unmounted = %mountpoint% not mounted
-      label-unmounted-foreground = \${colors.foreground-alt}
+      label-unmounted-foreground = ${colors.foreground-alt}
 
       [module/bspwm]
       type = internal/bspwm
 
       label-focused = %index%
-      label-focused-background = \${colors.background-alt}
-      label-focused-underline= \${colors.primary}
+      label-focused-background = ${colors.background-alt}
+      label-focused-underline= ${colors.primary}
       label-focused-padding = 2
 
       label-occupied = %index%
       label-occupied-padding = 2
 
       label-urgent = %index%!
-      label-urgent-background = \${colors.alert}
+      label-urgent-background = ${colors.alert}
       label-urgent-padding = 2
 
       label-empty = %index%
-      label-empty-foreground = \${colors.foreground-alt}
+      label-empty-foreground = ${colors.foreground-alt}
       label-empty-padding = 2
 
       ; Separator in between workspaces
@@ -435,30 +435,30 @@ settings:
 
       label-mode-padding = 2
       label-mode-foreground = #000
-      label-mode-background = \${colors.primary}
+      label-mode-background = ${colors.primary}
 
       ; focused = Active workspace on focused monitor
       label-focused = x
-      label-focused-background = \${colors.background}
-      label-focused-foreground = \${colors.foreground}
-      label-focused-underline = \${colors.background}
-      label-focused-padding = \${module/bspwm.label-focused-padding}
+      label-focused-background = ${colors.background}
+      label-focused-foreground = ${colors.foreground}
+      label-focused-underline = ${colors.background}
+      label-focused-padding = ${module/bspwm.label-focused-padding}
 
       ; unfocused = Inactive workspace on any monitor
       label-unfocused = ·
-      label-unfocused-padding = \${module/bspwm.label-occupied-padding}
+      label-unfocused-padding = ${module/bspwm.label-occupied-padding}
 
       ; visible = Active workspace on unfocused monitor
       label-visible = x
-      label-visible-background = \${self.label-focused-background}
-      label-visible-underline = \${self.label-focused-underline}
-      label-visible-padding = \${self.label-focused-padding}
+      label-visible-background = ${self.label-focused-background}
+      label-visible-underline = ${self.label-focused-underline}
+      label-visible-padding = ${self.label-focused-padding}
 
       ; urgent = Workspace with urgency hint set
       label-urgent = %icon% %index%
-      label-urgent-foreground = \${colors.alert}
-      label-urgent-background = \${module/bspwm.label-urgent-background}
-      label-urgent-padding = \${module/bspwm.label-urgent-padding}
+      label-urgent-foreground = ${colors.alert}
+      ; label-urgent-background = ${module/bspwm.label-urgent-background}
+      label-urgent-padding = ${module/bspwm.label-urgent-padding}
 
       ; Separator in between workspaces
       ; label-separator = |
@@ -481,7 +481,7 @@ settings:
       type = internal/memory
       interval = 0.5
       format-prefix = " "
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
       label = %percentage_used%%    %percentage_swap_used%%
 
       [module/wlan]
@@ -494,16 +494,16 @@ settings:
 
       format-disconnected =
       ;format-disconnected = <label-disconnected>
-      ;format-disconnected-underline = \${self.format-connected-underline}
+      ;format-disconnected-underline = ${self.format-connected-underline}
       ;label-disconnected = %ifname% disconnected
-      ;label-disconnected-foreground = \${colors.foreground-alt}
+      ;label-disconnected-foreground = ${colors.foreground-alt}
 
       ramp-signal-0 = 
       ramp-signal-1 = 
       ramp-signal-2 = 
       ramp-signal-3 = 
       ramp-signal-4 = 
-      ramp-signal-foreground = \${colors.foreground-alt}
+      ramp-signal-foreground = ${colors.foreground-alt}
 
       [module/eth]
       type = internal/network
@@ -511,14 +511,14 @@ settings:
       interval = 3.0
 
       format-connected-prefix = " "
-      format-connected-prefix-foreground = \${colors.foreground-alt}
+      format-connected-prefix-foreground = ${colors.foreground-alt}
       label-connected = %local_ip%
 
       format-disconnected =
       ;format-disconnected = <label-disconnected>
-      ;format-disconnected-underline = \${self.format-connected-underline}
+      ;format-disconnected-underline = ${self.format-connected-underline}
       ;label-disconnected = %ifname% disconnected
-      ;label-disconnected-foreground = \${colors.foreground-alt}
+      ;label-disconnected-foreground = ${colors.foreground-alt}
 
       [module/date]
       type = internal/date
@@ -531,7 +531,7 @@ settings:
       time-alt = %H:%M:%S
 
       format-prefix = 
-      format-prefix-foreground = \${colors.foreground-alt}
+      format-prefix-foreground = ${colors.foreground-alt}
 
       label = %date% %time%
 
@@ -540,7 +540,7 @@ settings:
 
       format-volume = <label-volume> <bar-volume>
       label-volume = VOL %percentage%%
-      label-volume-foreground = \${root.foreground}
+      label-volume-foreground = ${root.foreground}
 
       label-muted =  muted
       label-muted-foreground = #666
@@ -560,7 +560,7 @@ settings:
       bar-volume-fill-font = 2
       bar-volume-empty = ─
       bar-volume-empty-font = 2
-      bar-volume-empty-foreground = \${colors.foreground-alt}
+      bar-volume-empty-foreground = ${colors.foreground-alt}
 
       [module/battery]
       type = internal/battery
@@ -574,17 +574,17 @@ settings:
       label-discharging = %percentage%%
 
       format-full-prefix = " "
-      format-full-prefix-foreground = \${colors.foreground-alt}
+      format-full-prefix-foreground = ${colors.foreground-alt}
 
       ramp-capacity-0 = 
       ramp-capacity-1 = 
       ramp-capacity-2 = 
-      ramp-capacity-foreground = \${colors.foreground-alt}
+      ramp-capacity-foreground = ${colors.foreground-alt}
 
       animation-charging-0 = 
       animation-charging-1 = 
       animation-charging-2 = 
-      animation-charging-foreground = \${colors.foreground-alt}
+      animation-charging-foreground = ${colors.foreground-alt}
       animation-charging-framerate = 750
 
       animation-discharging-0 = 
@@ -592,7 +592,7 @@ settings:
       animation-discharging-2 = 
       animation-discharging-3 = 
       animation-discharging-4 = 
-      animation-discharging-foreground = \${colors.foreground-alt}
+      animation-discharging-foreground = ${colors.foreground-alt}
       animation-discharging-framerate = 750
 
       [module/powermenu]
@@ -603,11 +603,11 @@ settings:
       format-spacing = 1
 
       label-open =  open
-      label-open-foreground = \${colors.secondary}
+      label-open-foreground = ${colors.secondary}
       label-close =  cancel
-      label-close-foreground = \${colors.secondary}
+      label-close-foreground = ${colors.secondary}
       label-separator = |
-      label-separator-foreground = \${colors.foreground-alt}
+      label-separator-foreground = ${colors.foreground-alt}
 
       menu-0-0 = reboot
       menu-0-0-exec = menu-open-1
