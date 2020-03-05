@@ -140,9 +140,9 @@ settings:
       #exec --no-startup-id /usr/lib/polkit-kde-authentication-agent-1
       #bindsym XF86AudioPause exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
       #bindsym XF86AudioPlay exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
-      #bindsym XF86AudioLowerVolume exec "pactl set-sink-volume @DEFAULT_SINK@ -1000"
-      #bindsym XF86AudioRaiseVolume exec "pactl set-sink-volume @DEFAULT_SINK@ +1000"
-      #bindsym XF86AudioMute exec "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+      bindsym XF86AudioLowerVolume exec "pactl set-sink-volume @DEFAULT_SINK@ -1000"
+      bindsym XF86AudioRaiseVolume exec "pactl set-sink-volume @DEFAULT_SINK@ +1000"
+      bindsym XF86AudioMute exec "pactl set-sink-mute @DEFAULT_SINK@ toggle"
 
       #bindsym Print exec scrot '%Y%m%d_%H%M%S.png' -e 'mv $f $HOME/pictures/screenshots' && notify-send 'screnshot' 'taken. in ~/pictures/screenshots'
       #bindsym shift+Print --release exec notify-send 'screenshot' 'please select area' && scrot '%Y%m%d_%H%M%S.png' -s -e 'mv $f $HOME/pictures/screenshots' && notify-send 'screnshot' 'taken. in ~/pictures/screenshots'

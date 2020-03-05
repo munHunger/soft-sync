@@ -8,6 +8,10 @@ packages:
     alternatives:
       - name: "jsoncpp"
         manager: PACMAN
+  - name: "upower"
+    alternatives:
+      - name: "upower"
+        manager: PACMAN
   - name: "polybar"
     alternatives:
       - name: "polybar-git"
@@ -19,7 +23,7 @@ packages:
 settings:
   - path: ~/.config/i3/config
     content: |-
-      exec --no-startup-id polybar poly
+      exec --no-startup-id ~/.config/polybar/launch.sh
     position:
       type: END
     when:
@@ -30,10 +34,10 @@ settings:
       #!/bin/bash
       if type "xrandr"; then
         for m in \$(xrandr --query | grep " connected" | cut -d" " -f1); do
-          MONITOR=\$m polybar --reload polybar &
+          MONITOR=\$m polybar --reload poly &
         done
       else
-        polybar --reload polybar &
+        polybar --reload poly &
       fi
   - path: ~/.config/polybar/spotify-now
     content: |-
@@ -159,16 +163,16 @@ settings:
 
 
       # check if spotify is running
-      status=`pidof spotify | wc -l`
+      status=\`pidof spotify | wc -l\`
       if [[ "\$status" != 1 && "\$ERROR" != "" ]]; then
           echo "\$ERROR"
       else
-        playback=`dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus' | grep -o Paused`
+        playback=\`dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus' | grep -o Paused\`
         if [[ "\$playback" == "Paused" && "\$PAUSED" != "" ]]; then
           echo "\$PAUSED"
         elif [[ "\$INFO" != "" ]]; then
             # get mpris2 dbus status of spotify player
-            META=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata'`
+            META=\`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata'\`
             INFO="\${INFO//"%album"/\$(album)}"
             INFO="\${INFO//"%artist"/\$(artist)}"
             INFO="\${INFO//"%disc"/\$(disc)}"
@@ -564,7 +568,7 @@ settings:
 
       [module/battery]
       type = internal/battery
-      battery = BAT0
+      battery = BAT1
       adapter = AC
       full-at = 98
 

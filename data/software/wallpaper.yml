@@ -1,9 +1,14 @@
 name: "Wallpaper"
+packages:
+  - name: "feh"
+    alternatives:
+      - name: "feh"
+        manager: PACMAN
 install:
   - |-
     wget -O ~/.config/wallpaper.jpg https://wallpaperaccess.com/full/1398275.jpg
 settings:
-  - path: ~/.config/i3/config
+  - path: ~/.config/i3/config2
     content: |-
       exec --no-startup-id "feh --bg-scale ~/.config/wallpaper.jpg"
     position:

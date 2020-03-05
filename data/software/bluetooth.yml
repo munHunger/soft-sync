@@ -1,0 +1,14 @@
+name: "Bluetooth"
+packages:
+  - name: "blueberry"
+    alternatives:
+      - name: "blueberry"
+        manager: PACMAN
+  - name: "bluez"
+    alternatives:
+      - name: "bluez"
+        manager: PACMAN
+  - name: "bluez-utils"
+    alternatives:
+      - name: "bluez-utils"
+        manager: PACMAN

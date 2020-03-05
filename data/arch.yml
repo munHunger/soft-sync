@@ -18,11 +18,12 @@ wanted:
   - fonts
   - bashPrompt
   - wallpaper
+  - bluetooth
+  - spotify
 installed:
   - aurutils
   - urxvt
   - pulseaudio
-  - polybar
   - openscad
   - rofi
   - code
@@ -30,4 +31,10 @@ installed:
   - nvidia
   - i3
   - chrome
+  - fonts
+  - bashPrompt
+  - wallpaper
+  - bluetooth
+  - spotify
   - x
+  - polybar

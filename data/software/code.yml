@@ -7,7 +7,7 @@ packages:
       - name: "code-git"
         manager: AURUTILS
 settings:
-  - path: ~/.config/Code/User/settings.json
+  - path: ~/.config/'Code - OSS'/User/settings.json
     content: |-
       {
         "workbench.editor.centeredLayoutAutoResize": false,
