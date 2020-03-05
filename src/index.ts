@@ -1,59 +1,57 @@
-import { Software, PositionType } from "./domain/software";
 import { logger } from "./logger";
 import yargs from "yargs";
-import { System } from "./domain/system";
 import * as installer from "./installer";
 import * as config from "./configuration";
 import { configure } from "./configuration";
 
-yargs
-  .command(
-    "sync [system]",
-    "sync the local machine",
-    yargs => {
-      yargs
-        .positional("system", {
-          describe: "The system to read and write config for"
+/* tslint:disable:no-unused-expression */
+yargs.command(
+  "sync [system]",
+  "sync the local machine",
+  args => {
+    args
+      .positional("system", {
+        describe: "The system to read and write config for"
+      })
+      .option("dryRun", {
+        describe: "Don't do any real changes",
+        default: false,
+        type: "boolean",
+        alias: "d"
+      })
+      .option("force", {
+        describe: "force a reinstall",
+        default: false,
+        type: "boolean",
+        alias: "f"
+      });
+  },
+  argv => {
+    config
+      .readSystem(argv.system as string)
+      .then(async system => {
+        logger.info("Read system info", { data: system });
+        if (!system.installed || argv.force) system.installed = [];
+        return installer.installWanted(system, argv);
+      })
+      .then(system => configure(system, argv).then(data => {
+        logger.debug(`Virtual Config`, { data })
+        Object.keys(data).forEach(key => {
+          installer.installConfig(key, data[key], argv);
         })
-        .option("dryRun", {
-          describe: "Don't do any real changes",
-          default: false,
-          type: "boolean",
-          alias: "d"
-        })
-        .option("force", {
-          describe: "force a reinstall",
-          default: false,
-          type: "boolean",
-          alias: "f"
-        });
-    },
-    argv => {
-      config
-        .readSystem(argv.system as string)
-        .then(async system => {
-          logger.info("Read system info", { data: system });
-          if (!system.installed || argv.force) system.installed = [];
-          return installer.installWanted(system, argv);
-        })
-        .then(system => configure(system, argv).then(data => {
-          logger.debug(`Virtual Config`, { data })
-          Object.keys(data).forEach(key => {
-            installer.installConfig(key, data[key], argv);
-          })
-          return system
-        }))
-        .then(system => {
-          if (!argv.dryRun) config.saveConfig(argv.system as string, system);
-        })
-        .then(() => logger.info(`Install Done`));
-    }
-  )
+        return system
+      }))
+      .then(system => {
+        if (!argv.dryRun) config.saveConfig(argv.system as string, system);
+      })
+      .then(() => logger.info(`Install Done`));
+  }
+)
   .command(
     "install [system] [application]",
     "Installs an application",
-    yargs => {
-      yargs
+    args => {
+      args
         .positional("system", {
           describe: "The system to read and write config for"
         })
@@ -92,8 +90,8 @@ yargs
   .command(
     "uninstall [system] [application]",
     "Uninstalls an application",
-    yargs => {
-      yargs
+    args => {
+      args
         .positional("system", {
           describe: "The system to read and write config for"
         })
