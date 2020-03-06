@@ -20,6 +20,11 @@ describe("Reading", () => {
             `)
             )
           }
+        },
+        "./domain/sync": {
+          SyncSettings: {
+            load: sinon.stub().returns(Promise.resolve(""))
+          }
         }
       }
     ]) as any).readSystem("arch") as Promise<System>).then(system =>
@@ -64,6 +69,11 @@ describe("Virtual config", () => {
         fs: {
           promises: {
             readFile: fsStub
+          }
+        },
+        "./domain/sync": {
+          SyncSettings: {
+            load: sinon.stub().returns(Promise.resolve(""))
           }
         }
       }
