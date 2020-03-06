@@ -25,13 +25,13 @@ export function readSystem(name: string): Promise<System> {
 }
 
 export function readConfig(name: string): Promise<Software> {
-  return SyncSettings.load().then(sync =>
-    fs
+  return SyncSettings.load().then(sync => {
+    return fs
       .readFile(resolveHome(`${sync.folderPath}/software/${name}.yml`), "utf-8")
       .then(data => yaml.load(data))
       .then(data => data as Software)
-      .then(software => Software.validate(software))
-  );
+      .then(software => Software.validate(software));
+  });
 }
 
 export function readConfigForApps(names: string[]): Promise<any[]> {
@@ -61,7 +61,6 @@ export function generateInstallList(system: System): Promise<string[]> {
 
 export function configure(system: System, options: any): Promise<any> {
   return generateInstallList(system).then(installList => {
-    logger.info(`generated install list`, { data: installList });
     return Promise.all(
       installList.map(name =>
         readConfig(name).then(data => ({ ...data, name }))
