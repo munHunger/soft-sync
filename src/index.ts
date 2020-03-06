@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { logger } from "./logger";
 import yargs from "yargs";
 import * as installer from "./installer";
