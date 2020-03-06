@@ -13,6 +13,13 @@ export function notEmpty(value: any, propertyName: string): string {
   }
 }
 
+export function expectFields(value: any, fields: string[]): Promise<string> {
+  if (!value) return Promise.resolve("");
+  const unexpected = Object.keys(value).find(val => fields.indexOf(val) < 0);
+  if (!unexpected) return Promise.resolve("");
+  return Promise.reject(`Unexpected fields ${unexpected}`);
+}
+
 export function customCheck(
   value: any,
   checkFun: (value: any) => Promise<boolean>,
