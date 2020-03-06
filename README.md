@@ -7,6 +7,8 @@ In essence this can be seen as private package manager wrapper that will install
 
 The managed settings can be configured by multiple software configurations. i.e. a file can be extended by another software if desired.
 
+Example of config can be found here (https://github.com/munHunger/soft-sync-data)
+
 ## Config
 
 Config is borken into 2 different types, `Software` and `System`

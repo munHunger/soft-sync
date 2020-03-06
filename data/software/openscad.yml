@@ -1,6 +1,0 @@
-name: "OpenSCAD"
-packages:
-  - name: "openscad"
-    alternatives:
-      - name: "openscad"
-        manager: PACMAN
