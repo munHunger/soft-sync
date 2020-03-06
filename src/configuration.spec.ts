@@ -27,3 +27,48 @@ describe("Reading", () => {
     );
   });
 });
+
+describe("Virtual config", () => {
+  it("Joins configuration when conditional at END", async () => {
+    let fsStub = sinon.stub();
+    fsStub
+      .withArgs(sinon.match("a.yml"), sinon.match.any)
+      .returns(
+        Promise.resolve(`
+    name: a
+    manager: PACMAN
+    settings:
+      - path: 1.config
+        content: a
+        position:
+          type: END
+        when:
+          installed:
+          - b
+    `)
+      );
+    fsStub
+      .withArgs(sinon.match("b.yml"), sinon.match.any)
+      .returns(
+        Promise.resolve(`
+    name: b
+    manager: PACMAN
+    settings:
+      - path: 1.config
+        content: b
+    `)
+      );
+    return ((proxyquire.noCallThru().apply(this, [
+      "./configuration",
+      {
+        fs: {
+          promises: {
+            readFile: fsStub
+          }
+        }
+      }
+    ]) as any).configure(new System("", ["a", "b"], [], []), {}) as Promise<
+      any
+    >).then(config => expect(config["1.config"]).toBe("b\na"));
+  });
+});
