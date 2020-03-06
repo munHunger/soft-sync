@@ -1,6 +1,0 @@
-name: "user creation script"
-install:
-  - |-
-    useradd munhunger
-    passwd munhunger
-    usermod -aG sudo munhunger

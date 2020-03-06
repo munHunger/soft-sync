@@ -3,24 +3,35 @@ import { System } from "./domain/system";
 import yaml from "js-yaml";
 import { logger } from "./logger";
 import { Software, PositionType } from "./domain/software";
+import { SyncSettings } from "./domain/sync";
+import { resolveHome } from "./util/file";
 
 export function saveConfig(name: string, system: System): Promise<void> {
-  return fs.writeFile(`./data/${name}.yml`, yaml.dump(system));
+  return SyncSettings.load().then(sync =>
+    fs.writeFile(
+      resolveHome(`${sync.folderPath}/${name}.yml`),
+      yaml.dump(system)
+    )
+  );
 }
 
 export function readSystem(name: string): Promise<System> {
-  return fs
-    .readFile(`./data/${name}.yml`, "utf-8")
-    .then(data => yaml.load(data))
-    .then(data => data as System);
+  return SyncSettings.load().then(sync =>
+    fs
+      .readFile(resolveHome(`${sync.folderPath}/${name}.yml`), "utf-8")
+      .then(data => yaml.load(data))
+      .then(data => data as System)
+  );
 }
 
 export function readConfig(name: string): Promise<Software> {
-  return fs
-    .readFile(`./data/software/${name}.yml`, "utf-8")
-    .then(data => yaml.load(data))
-    .then(data => data as Software)
-    .then(software => Software.validate(software));
+  return SyncSettings.load().then(sync =>
+    fs
+      .readFile(resolveHome(`${sync.folderPath}/software/${name}.yml`), "utf-8")
+      .then(data => yaml.load(data))
+      .then(data => data as Software)
+      .then(software => Software.validate(software))
+  );
 }
 
 export function readConfigForApps(names: string[]): Promise<any[]> {
@@ -74,7 +85,9 @@ export function configure(system: System, options: any): Promise<any> {
             setting.when.installed.every(pkg => installList.indexOf(pkg) > -1)
         )
         .forEach(setting => {
-          if ((PositionType as any)[setting.position.type] === PositionType.END) {
+          if (
+            (PositionType as any)[setting.position.type] === PositionType.END
+          ) {
             logger.debug(`Adding settings to ${setting.path}`);
             virtualSettings[setting.path] += "\n" + setting.content;
           }
