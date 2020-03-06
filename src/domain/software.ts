@@ -1,11 +1,15 @@
-import { notEmpty, customCheck } from "../validators/validator";
+import { notEmpty, customCheck, expectFields } from "../validators/validator";
 
 export enum PositionType {
   END,
   NON_MANAGED_END
 }
-class Position {
+export class Position {
   constructor(public type: PositionType) {}
+
+  static validate(position: Position): Promise<Position> {
+    return expectFields(position, ["type"]).then(() => position);
+  }
 }
 
 class Conditional {
@@ -13,21 +17,13 @@ class Conditional {
 }
 
 export class Setting {
-  public path: string;
-  public content: string;
-  public position: Position;
-  public when: Conditional;
   constructor(
-    path: string,
-    content: string,
-    position: Position,
-    when: Conditional
-  ) {
-    this.path = path;
-    this.content = content;
-    this.position = position;
-    this.when = when;
-  }
+    public path: string,
+    public content: string,
+    public position: Position,
+    public when: Conditional
+  ) {}
+
   static validate(setting: Setting): Promise<Setting> {
     let errors = [
       notEmpty(setting.path, "path"),
@@ -36,7 +32,11 @@ export class Setting {
       .filter(v => v)
       .join("\n");
     if (errors.trim().length > 0) return Promise.reject(errors);
-    return Promise.resolve(setting);
+    return Position.validate(setting.position)
+      .then(() =>
+        expectFields(setting, ["path", "content", "position", "when"])
+      )
+      .then(() => setting);
   }
 }
 
@@ -117,6 +117,11 @@ export class Software {
           )
         );
       })
+      .then(() =>
+        Promise.all(
+          (software.settings || []).map(setting => Setting.validate(setting))
+        )
+      )
       .then(() => {
         let errors = notEmpty(software.name, "name");
         if (errors) return Promise.reject(errors);

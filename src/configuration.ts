@@ -30,7 +30,11 @@ export function readConfig(name: string): Promise<Software> {
       .readFile(resolveHome(`${sync.folderPath}/software/${name}.yml`), "utf-8")
       .then(data => yaml.load(data))
       .then(data => data as Software)
-      .then(software => Software.validate(software));
+      .then(software => Software.validate(software))
+      .catch(err => {
+        logger.error(`error reading config for ${name}`);
+        throw err;
+      });
   });
 }
 
