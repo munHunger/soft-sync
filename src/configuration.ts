@@ -93,6 +93,26 @@ function flattenObject(obj: any): any {
   return toReturn;
 }
 
+function themeSetting(setting: string, theme: any, themeName: string) {
+  let variableRegex = /{:.*?}/gm;
+  if (variableRegex.test(setting)) {
+    logger.debug("found variable");
+    [...setting.match(variableRegex)].forEach((m) => {
+      let name = m.slice(2, -1);
+      logger.debug(`Found variable in setting ${m}`);
+      if (!theme[name])
+        logger.warn(`could not find variable ${name} in theme ${themeName}`, {
+          data: theme,
+        });
+      else {
+        logger.debug(`replacing variable ${m} in theme with ${theme[name]}`);
+        setting = setting.replace(m, theme[name]);
+      }
+    });
+  }
+  return setting;
+}
+
 export function configure(system: System, options: any): Promise<any> {
   return generateInstallList(system).then((installList) => {
     return Promise.all(
@@ -111,25 +131,11 @@ export function configure(system: System, options: any): Promise<any> {
           .filter((s) => s)
           .filter((setting) => !setting.when)
           .forEach((setting) => {
-            let variableRegex = /{:.*?}/gm;
-            if (variableRegex.test(setting.content)) {
-              logger.debug("found variable");
-              [...setting.content.match(variableRegex)].forEach((m) => {
-                let name = m.slice(2, -1);
-                logger.debug(`Found variable in setting ${m}`);
-                if (!theme[name])
-                  logger.warn(
-                    `could not find variable ${name} in theme ${system.theme}`,
-                    { data: theme }
-                  );
-                else {
-                  logger.debug(
-                    `replacing variable ${m} in theme with ${theme[name]}`
-                  );
-                  setting.content = setting.content.replace(m, theme[name]);
-                }
-              });
-            }
+            setting.content = themeSetting(
+              setting.content,
+              theme,
+              system.theme
+            );
             virtualSettings[setting.path] = setting.content;
           });
 
@@ -149,6 +155,11 @@ export function configure(system: System, options: any): Promise<any> {
               (PositionType as any)[setting.position.type] === PositionType.END
             ) {
               logger.debug(`Adding settings to ${setting.path}`);
+              setting.content = themeSetting(
+                setting.content,
+                theme,
+                system.theme
+              );
               virtualSettings[setting.path] += "\n" + setting.content;
             }
           });
