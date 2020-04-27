@@ -1,6 +1,6 @@
 {
   "name": "soft-sync",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "sync your settings across devices",
   "homepage": "https://github.com/munhunger/soft-sync#readme",
   "main": "src/index.ts",

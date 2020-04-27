@@ -111,7 +111,7 @@ export function configure(system: System, options: any): Promise<any> {
           .filter((s) => s)
           .filter((setting) => !setting.when)
           .forEach((setting) => {
-            let variableRegex = /{:.*}/gm;
+            let variableRegex = /{:.*?}/gm;
             if (variableRegex.test(setting.content)) {
               logger.debug("found variable");
               [...setting.content.match(variableRegex)].forEach((m) => {
