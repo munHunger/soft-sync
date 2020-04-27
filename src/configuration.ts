@@ -74,14 +74,14 @@ export function generateInstallList(system: System): Promise<string[]> {
 }
 
 function flattenObject(obj: any): any {
-  var toReturn: any = {};
+  let toReturn: any = {};
 
-  for (var i in obj) {
+  for (let i in obj) {
     if (!obj.hasOwnProperty(i)) continue;
 
-    if (typeof obj[i] == "object") {
-      var flatObject = flattenObject(obj[i]);
-      for (var x in flatObject) {
+    if (typeof obj[i] === "object") {
+      let flatObject = flattenObject(obj[i]);
+      for (let x in flatObject) {
         if (!flatObject.hasOwnProperty(x)) continue;
 
         toReturn[i + "." + x] = flatObject[x];
